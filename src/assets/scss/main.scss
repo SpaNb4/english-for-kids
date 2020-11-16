@@ -76,6 +76,8 @@ header {
     .categories {
         .cards {
             display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
             gap: 40px;
             .card {
                 border-radius: 20px;
