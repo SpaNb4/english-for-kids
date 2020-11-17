@@ -8,7 +8,7 @@ body {
 }
 
 .wrapper {
-    padding: 0 4rem;
+    max-width: 1320px;
     margin: 0 auto;
 }
 
@@ -17,16 +17,45 @@ header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        .menu {
+        .menu_btn {
             display: block;
-            width: 3rem;
-            height: 3rem;
+            position: relative;
+            z-index: 2;
+            width: 40px;
+            height: 40px;
             background: url(/assets/img/menu-open.svg) 0 0 repeat;
-            background-size: 3rem 3rem;
-            margin-top: 15px;
-            margin-right: 43px;
-            -webkit-transition: 1s;
-            transition: 1s;
+            background-size: 40px 40px;
+        }
+        .menu_popup {
+            background: #e68b45;
+            position: fixed;
+            overflow: hidden;
+            width: 0;
+            left: 0;
+            top: 0;
+            transition: 0.5s;
+            height: 100%;
+            z-index: 1;
+            &.active {
+                width: 400px;
+            }
+            ul {
+                flex-direction: column;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                li {
+                    list-style-type: none;
+                    font-weight: bold;
+                    font-size: 34px;
+                    padding: 20px 0;
+                    a {
+                        color: white;
+                        text-decoration: none;
+                    }
+                }
+            }
         }
         .logo {
         }
@@ -82,10 +111,14 @@ header {
             .card {
                 border-radius: 20px;
                 background-color: white;
-                .card_img img {
-                    border-radius: 20px 20px 0 0;
-                    height: auto;
-                    width: 100%;
+                .card_img {
+                    width: 300px;
+                    height: 200px;
+                    img {
+                        border-radius: 20px 20px 0 0;
+                        height: auto;
+                        width: 100%;
+                    }
                 }
                 .card_name {
                     font-weight: bold;

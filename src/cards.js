@@ -2,35 +2,35 @@ const cards = [
     [
         {
             word: 'Animals A',
-            image: 'img/animals1.png',
+            image: 'img/animals_a.png',
         },
         {
             word: 'Animals B',
-            image: 'img/animals1.png',
+            image: 'img/animals_b.png',
         },
         {
             word: 'Vegetables',
-            image: 'img/fairytales.png',
+            image: 'img/vegetables.png',
         },
         {
             word: 'Professions',
-            image: 'img/fairytales.png',
+            image: 'img/professions.png',
         },
         {
             word: 'Fantasy',
-            image: 'img/fairytales.png',
+            image: 'img/fantasy.png',
         },
         {
             word: 'Toys',
-            image: 'img/animals1.png',
+            image: 'img/toys.png',
         },
         {
             word: 'Numbers',
-            image: 'img/animals1.png',
+            image: 'img/numbers.png',
         },
         {
             word: 'Space',
-            image: 'img/animals1.png',
+            image: 'img/space.png',
         },
     ],
     [
@@ -38,49 +38,49 @@ const cards = [
             word: 'cry',
             translation: 'плакать',
             image: 'img/cry.jpg',
-            audioSrc: 'audio/cry.mp3',
+            audioSrc: 'cry.mp3',
         },
         {
             word: 'dance',
             translation: 'танцевать',
             image: 'img/dance.jpg',
-            audioSrc: 'audio/dance.mp3',
+            audioSrc: 'house.mp3',
         },
         {
             word: 'dive',
             translation: 'нырять',
             image: 'img/dive.jpg',
-            audioSrc: 'audio/dive.mp3',
+            audioSrc: 'house.mp3',
         },
         {
             word: 'draw',
             translation: 'рисовать',
             image: 'img/draw.jpg',
-            audioSrc: 'audio/draw.mp3',
+            audioSrc: 'cat.mp3',
         },
         {
             word: 'fish',
             translation: 'ловить рыбу',
             image: 'img/fish.jpg',
-            audioSrc: 'audio/fish.mp3',
+            audioSrc: 'cat.mp3',
         },
         {
             word: 'fly',
             translation: 'летать',
             image: 'img/fly.jpg',
-            audioSrc: 'audio/fly.mp3',
+            audioSrc: 'sounds/1.mp3',
         },
         {
             word: 'hug',
             translation: 'обнимать',
             image: 'img/hug.jpg',
-            audioSrc: 'audio/hug.mp3',
+            audioSrc: 'sounds/1.mp3',
         },
         {
             word: 'jump',
             translation: 'прыгать',
             image: 'img/jump.jpg',
-            audioSrc: 'audio/jump.mp3',
+            audioSrc: 'sounds/1.mp3',
         },
     ],
     [
