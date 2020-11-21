@@ -13,7 +13,7 @@ let cardDiv;
 
 const English = {
     isStartPage: true,
-    isGameMode: false,
+    isTrainMode: true,
     isGame: false,
     wasWrong: 0,
 
@@ -85,6 +85,19 @@ window.addEventListener('DOMContentLoaded', () => {
     menuUl.addEventListener('click', (e) => {
         setCategories('.menu_ul', '.menu_ul a', e);
         menuPopup.classList.toggle('active');
+    });
+
+    let gameModeBtn = document.querySelector('#switch');
+    gameModeBtn.addEventListener('click', () => {
+        let gameModeText = document.querySelector('.game_mode');
+        if (gameModeBtn.checked) {
+            English.isTrainMode = !English.isTrainMode;
+            gameModeText = document.querySelector('.game_mode');
+            gameModeText.innerHTML = 'Play';
+        } else {
+            English.isTrainMode = !English.isTrainMode;
+            gameModeText.innerHTML = 'Train';
+        }
     });
 
     function setCategories(trg, trg_cat, e) {

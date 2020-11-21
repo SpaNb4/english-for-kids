@@ -61,8 +61,18 @@ header {
         }
         .checkbox_switch {
             position: relative;
-            width: 60px;
-            height: 30px;
+            width: 140px;
+            height: 40px;
+            .game_mode {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                font-weight: bold;
+                font-size: 16px;
+                color: white;
+                text-transform: uppercase;
+            }
             input[type='checkbox'] {
                 opacity: 0;
                 & ~ label {
@@ -80,8 +90,8 @@ header {
                         position: absolute;
                         top: 0;
                         left: 0px;
-                        width: 30px - 2px * 2;
-                        height: 30px - 2px * 2;
+                        width: 40px - 2px * 2;
+                        height: 40px - 2px * 2;
                         border-radius: 50%;
                         border: 2px solid #ccc;
                         background-color: #fff;
@@ -91,7 +101,7 @@ header {
                 &:checked ~ label {
                     background: #159;
                     &:after {
-                        left: 60px - 30px;
+                        left: 130px - 30px;
                         border-color: #159;
                     }
                 }
