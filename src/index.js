@@ -39,11 +39,27 @@ const English = {
         for (let i = 0; i < cardsArr[n].length; i++) {
             let card = document.createElement('div');
             card.classList.add('card');
-            card.innerHTML = `<div class="card_img">
-                                 <img src="./assets/${cardsArr[n][i].image}" alt="">
-                             </div>
-                             <div class="card_name">${cardsArr[n][i].word}</div>`;
-            if (cardsArr[n][i].audioSrc) {
+            if (!cardsArr[n][i].audioSrc) {
+                card.innerHTML = `<div class="card_img">
+                                    <img src="./assets/${cardsArr[n][i].image}" alt="">
+                                  </div>
+                                  <div class="card_name">${cardsArr[n][i].word}</div>`;
+            } else {
+                card.classList.add('card_flip');
+                card.innerHTML = `<div class="card_front">
+                                  <div class="card_img">
+                                    <img src="./assets/${cardsArr[n][i].image}" alt="">
+                                  </div>
+                                  <div class="card_name">${cardsArr[n][i].word}</div>
+                                  <div class='flip_btn'> </div>
+                                  </div>
+
+                                  <div class="card_back">
+                                  <div class="card_img">
+                                    <img src="./assets/${cardsArr[n][i].image}" alt="">
+                                  </div>
+                                  <div class="card_name">${cardsArr[n][i].translation}</div>
+                                  </div>`;
                 card.dataset.audio = cardsArr[n][i].audioSrc;
             }
             cardsDiv.append(card);
@@ -73,9 +89,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function setCategories(trg, trg_cat, e) {
         let clickedCard = e.target.closest(trg);
-        console.log(clickedCard);
         let catName = document.querySelector(trg_cat);
-        console.log(catName);
+
         if (clickedCard && English.isStartPage) {
             let categoriesPos = 0;
             for (let i = 0; i < cardsArr[0].length; i++) {
@@ -87,9 +102,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
             English.setCards(categoriesPos);
             English.isStartPage = !English.isStartPage;
+        } else if (e.target.closest('.flip_btn')) {
+            const cardFlip = e.target.closest('.card_flip');
+            cardFlip.classList.toggle('fliped');
+            cardFlip.addEventListener('mouseleave', () => {
+                if (cardFlip.classList.contains('fliped')) {
+                    cardFlip.classList.toggle('fliped');
+                }
+            });
         } else if (clickedCard) {
-            const sound = new Audio(clickedCard.dataset.audio);
-            sound.play();
+            if (!clickedCard.classList.contains('fliped')) {
+                const sound = new Audio(clickedCard.dataset.audio);
+                sound.play();
+            }
         }
     }
 });
