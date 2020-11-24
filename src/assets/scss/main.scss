@@ -1,3 +1,8 @@
+$white_color: #ffffff;
+$orange_color: #e68b45;
+$gray_color: #cccccc;
+$blue_color: #159;
+
 body {
     font-family: Montserrat;
     background: url(/assets/img/bg.jpg);
@@ -31,7 +36,7 @@ header {
             }
         }
         .menu_popup {
-            background: #e68b45;
+            background: $orange_color;
             position: fixed;
             overflow: hidden;
             width: 0;
@@ -88,7 +93,7 @@ header {
                     top: 0;
                     width: 100%;
                     height: 100%;
-                    background: #ccc;
+                    background: $gray_color;
                     border-radius: 30px;
                     cursor: pointer;
                     transition: all 0.3s;
@@ -100,16 +105,16 @@ header {
                         width: 40px - 2px * 2;
                         height: 40px - 2px * 2;
                         border-radius: 50%;
-                        border: 2px solid #ccc;
-                        background-color: #fff;
+                        border: 2px solid $gray_color;
+                        background-color: $white_color;
                         transition: all 0.3s;
                     }
                 }
                 &:checked ~ label {
-                    background: #159;
+                    background: $blue_color;
                     &:after {
                         left: 130px - 30px;
-                        border-color: #159;
+                        border-color: $blue_color;
                     }
                 }
             }
@@ -133,7 +138,7 @@ header {
         margin-bottom: 20px;
         font-weight: bold;
         font-size: 48px;
-        color: #e68b45;
+        color: $orange_color;
         .categories_stats {
             font-size: 36px;
         }
@@ -188,12 +193,10 @@ header {
                     }
                 }
                 .card_img {
-                    img {
-                        display: block;
-                        border-radius: 20px 20px 0 0;
-                        height: auto;
-                        width: 100%;
-                    }
+                    display: block;
+                    border-radius: 20px 20px 0 0;
+                    width: 280px;
+                    height: 187px;
                 }
                 .card_description {
                     display: flex;

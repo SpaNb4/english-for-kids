@@ -46,19 +46,21 @@ const English = {
             let card = document.createElement('div');
             card.classList.add('card');
             // categories card
-            if (!cardsArr[n][i].audioSrc) {
+            if (cardsArr[n][i].category) {
                 card.innerHTML = `<div class="card_img">
-                                    <img src="./assets/${cardsArr[n][i].image}" alt="">
                                   </div>
                                   <div class="card_description">
                                     <div class="card_name">${cardsArr[n][i].word}</div>
                                   </div>`;
+                let cardImg = card.querySelector('.card_img');
+                cardImg.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
+                cardImg.style.backgroundSize = `contain`;
                 // not categories card
             } else {
                 card.classList.add('card_flip');
                 card.innerHTML = `<div class="card_front">
                                     <div class="card_img">
-                                        <img src="./assets/${cardsArr[n][i].image}" alt="">
+
                                     </div>
                                     <div class="card_description">
                                         <div class="card_name">${cardsArr[n][i].word}</div>
@@ -68,15 +70,21 @@ const English = {
 
                                   <div class="card_back">
                                     <div class="card_img">
-                                        <img src="./assets/${cardsArr[n][i].image}" alt="">
+
                                     </div>
                                      <div class="card_description">
                                         <div class="card_name">${cardsArr[n][i].translation}</div>
                                      </div>
                                   </div>`;
-                card.dataset.audio = cardsArr[n][i].audioSrc;
+
+                let cardImgFront = card.querySelector('.card_front .card_img');
+                cardImgFront.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
+                cardImgFront.style.backgroundSize = `contain`;
+                let cardImgBack = card.querySelector('.card_back .card_img');
+                cardImgBack.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
+                cardImgBack.style.backgroundSize = `contain`;
             }
-            this.wordsArr[i] = cardsArr[n][i].audioSrc;
+            this.wordsArr[i] = cardsArr[n][i].word;
             cardsDiv.append(card);
         }
     },
@@ -84,6 +92,10 @@ const English = {
 
 window.addEventListener('DOMContentLoaded', () => {
     English.init();
+
+    let msg = new SpeechSynthesisUtterance();
+    let synth = window.speechSynthesis;
+    msg.lang = 'en-US';
 
     // cards click
     cardsDiv.addEventListener('click', (e) => {
@@ -112,7 +124,7 @@ window.addEventListener('DOMContentLoaded', () => {
     gameModeBtn.addEventListener('click', () => {
         let gameModeText = document.querySelector('.game_mode');
         let cardDescr = document.querySelectorAll('.card_description');
-        let cardImg = document.querySelectorAll('.card_img img');
+        let cardImg = document.querySelectorAll('.card_img');
 
         // play mode
         if (gameModeBtn.checked && !English.isStartPage) {
@@ -132,7 +144,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             for (let i = 0; i < cardDescr.length; i++) {
                 cardDescr[i].style.display = 'flex';
-                cardImg[i].style.height = '100%';
+                cardImg[i].style.height = '187px';
                 cardImg[i].style.borderRadius = '20px 20px 0px 0px';
             }
             startGameBtn.style.display = 'none';
@@ -150,13 +162,15 @@ window.addEventListener('DOMContentLoaded', () => {
     startGameBtn.addEventListener('click', () => {
         if (English.currNumberWord == 0) {
             shuffle(English.wordsArr);
-            const firstWordSound = new Audio(English.wordsArr[English.currNumberWord]);
-            firstWordSound.play();
+            // first word sound
+            msg.text = `${English.wordsArr[English.currNumberWord]}`;
+            synth.speak(msg);
             startGameBtn.innerHTML = 'Repeat';
             English.isGameStart = true;
         } else {
-            const repeatWordSound = new Audio(English.wordsArr[English.currNumberWord]);
-            repeatWordSound.play();
+            // repeat word sound
+            msg.text = `${English.wordsArr[English.currNumberWord]}`;
+            synth.speak(msg);
         }
     });
 
@@ -197,12 +211,12 @@ window.addEventListener('DOMContentLoaded', () => {
             // not categories card click
         } else if (clickedCard && English.isTrainMode) {
             if (!clickedCard.classList.contains('fliped')) {
-                const clickedCardSound = new Audio(clickedCard.dataset.audio);
-                clickedCardSound.play();
+                msg.text = `${catName.innerHTML}`;
+                synth.speak(msg);
             }
             // play mode card click
         } else if (clickedCard && !English.isTrainMode && English.isGameStart) {
-            let catSound = catName.innerHTML + '.mp3';
+            let catSound = catName.innerHTML;
             let scoreDiv = document.querySelector('.score');
 
             // correct card click
@@ -210,10 +224,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 const corrSound = new Audio('correct.mp3');
                 corrSound.play();
                 English.currNumberWord++;
-                setTimeout(() => {
-                    const nextWordSound = new Audio(English.wordsArr[English.currNumberWord]);
-                    nextWordSound.play();
-                }, 1000);
+                if (English.currNumberWord != English.wordsArr.length) {
+                    setTimeout(() => {
+                        msg.text = `${English.wordsArr[English.currNumberWord]}`;
+                        synth.speak(msg);
+                    }, 1000);
+                }
                 clickedCard.classList.add('inactive');
                 let scoreStar = document.createElement('div');
                 scoreStar.classList.add('score_star');
