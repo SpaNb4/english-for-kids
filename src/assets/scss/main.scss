@@ -8,7 +8,7 @@ body {
 }
 
 .wrapper {
-    max-width: 1320px;
+    max-width: 1240px;
     margin: 0 auto;
 }
 
@@ -25,6 +25,10 @@ header {
             height: 40px;
             background: url(/assets/img/menu-open.svg) 0 0 repeat;
             background-size: 40px 40px;
+            transition: 1s;
+            &.rotate {
+                transform: rotate(90deg);
+            }
         }
         .menu_popup {
             background: #e68b45;
@@ -53,6 +57,9 @@ header {
                     a {
                         color: white;
                         text-decoration: none;
+                        &.active {
+                            border-bottom: 3px solid;
+                        }
                     }
                 }
             }
@@ -111,7 +118,29 @@ header {
 }
 
 .main {
-    margin-top: 40px;
+    margin-top: 10px;
+    .wrapper {
+        background: rgba(214, 214, 214, 0.9);
+        border-radius: 40px;
+        padding: 30px 50px;
+    }
+    .categories_heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 35px;
+        margin: 0;
+        margin-bottom: 20px;
+        font-weight: bold;
+        font-size: 48px;
+        color: #e68b45;
+        .categories_stats {
+            font-size: 36px;
+        }
+        .categories_start_game {
+            display: none;
+        }
+    }
     .categories {
         .cards {
             display: flex;
@@ -119,11 +148,16 @@ header {
             flex-wrap: wrap;
             gap: 40px;
             .card {
+                display: flex;
+                flex-direction: column;
                 border-radius: 20px;
                 background-color: white;
-
-                width: 300px;
-                height: 269px;
+                width: 280px;
+                height: 240px;
+                &.inactive {
+                    filter: brightness(0.5);
+                    pointer-events: none;
+                }
                 &.card_flip {
                     position: relative;
                     transition: transform 0.8s;
@@ -137,7 +171,7 @@ header {
                         height: 19px;
                         background: url(/assets/img/flip_btn.svg);
                         right: 25px;
-                        bottom: 22px;
+                        bottom: 17px;
                         cursor: pointer;
                         transition: all 0.2s ease;
                         &:active {
@@ -154,21 +188,39 @@ header {
                     }
                 }
                 .card_img {
-                    width: 300px;
-                    height: 200px;
                     img {
+                        display: block;
                         border-radius: 20px 20px 0 0;
                         height: auto;
                         width: 100%;
                     }
                 }
-                .card_name {
-                    font-weight: bold;
-                    font-size: 24px;
-                    text-align: center;
-                    padding: 20px;
+                .card_description {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 53px;
+                    .card_name {
+                        font-weight: bold;
+                        font-size: 24px;
+                    }
                 }
             }
+        }
+        .smiley {
+            text-align: center;
+        }
+    }
+    .score {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        height: 30px;
+        overflow: hidden;
+        margin-top: 20px;
+        .score_star img {
+            width: 30px;
+            height: 30px;
         }
     }
 }
