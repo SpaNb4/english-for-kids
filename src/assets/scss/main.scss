@@ -2,6 +2,7 @@ $white_color: #ffffff;
 $orange_color: #e68b45;
 $gray_color: #cccccc;
 $blue_color: #159;
+$black_color: #000000;
 
 body {
     font-family: Montserrat;
@@ -17,7 +18,7 @@ body {
     margin: 0 auto;
 }
 
-header {
+.header {
     .wrapper {
         display: flex;
         justify-content: space-between;
@@ -69,7 +70,8 @@ header {
                 }
             }
         }
-        .logo {
+        .header_logo img {
+            height: 130px;
         }
         .checkbox_switch {
             position: relative;
@@ -123,11 +125,11 @@ header {
 }
 
 .main {
-    margin-top: 10px;
+    margin-top: 20px;
     .wrapper {
         background: rgba(214, 214, 214, 0.9);
         border-radius: 40px;
-        padding: 30px 50px;
+        padding: 30px 50px 15px 30px;
     }
     .categories_heading {
         display: flex;
@@ -220,10 +222,24 @@ header {
         gap: 10px;
         height: 30px;
         overflow: hidden;
-        margin-top: 20px;
+        margin: 20px 0;
         .score_star img {
             width: 30px;
             height: 30px;
+        }
+    }
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        .footer_github a {
+            text-decoration: none;
+            color: $black_color;
+        }
+        .footer_year {
+            color: $black_color;
+        }
+        .footer_logo {
+            width: 100px;
         }
     }
 }
