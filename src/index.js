@@ -9,6 +9,9 @@ importAll(require.context('./assets/sounds/', true, /\.mp3$/));
 
 let cardsDiv = document.querySelector('.cards');
 let menuUl = document.querySelector('.menu_ul');
+let scoreDiv = document.querySelector('.score');
+let startGameBtn = document.querySelector('.categories_start_game');
+let gameModeBtn = document.querySelector('#switch');
 
 const English = {
     isStartPage: true,
@@ -19,18 +22,23 @@ const English = {
     wrongWordsCount: 0,
 
     init() {
+        English.isStartPage = true;
+
         // set categories
         this.setCards(0);
 
         let categoriesName = document.querySelector('.categories_name');
-        categoriesName.innerHTML = 'Categories';
+        categoriesName.innerHTML = 'Main Page';
 
         // set menu
         let menuLi = document.querySelector('.menu_ul li');
         if (!menuLi) {
+            let menuLi = document.createElement('li');
+            menuLi.innerHTML = `<img src="./assets/img/menu/main_page.svg" alt=""><a class="card_name active" href="#">Main Page</a>`;
+            menuUl.append(menuLi);
             for (let i = 0; i < cardsArr[0].length; i++) {
                 let menuLi = document.createElement('li');
-                menuLi.innerHTML = `<a class="card_name" href="#">${cardsArr[0][i].word}</a>`;
+                menuLi.innerHTML = `<img src="./assets/img/menu/${cardsArr[0][i].word}.svg" alt=""><a class="card_name" href="#">${cardsArr[0][i].word}</a>`;
                 menuUl.append(menuLi);
             }
         }
@@ -39,6 +47,16 @@ const English = {
     // remove all cards
     clearCards() {
         cardsDiv.innerHTML = '';
+        scoreDiv.innerHTML = '';
+
+        startGameBtn.style.display = 'none';
+        startGameBtn.innerHTML = 'Start game';
+        // gameModeBtn.checked = false;
+        English.isStartPage = false;
+        // English.isTrainMode = true;
+        English.isGameStart = false;
+        English.currNumberWord = 0;
+        English.wrongWordsCount = 0;
     },
 
     setCards(n) {
@@ -104,31 +122,40 @@ window.addEventListener('DOMContentLoaded', () => {
 
     let menuBtn = document.querySelector('.menu_btn');
     let menuPopup = document.querySelector('.menu_popup');
-    let startGameBtn = document.querySelector('.categories_start_game');
+
+    function menuToggle() {
+        menuPopup.classList.toggle('active');
+        menuBtn.classList.toggle('rotate');
+    }
+    // not menu click
+    document.body.addEventListener('click', (e) => {
+        if (e.target != menuUl && e.target != menuBtn) {
+            if (menuPopup.classList.contains('active')) {
+                menuToggle();
+            }
+        } else if (e.target == menuUl) {
+            menuToggle();
+        }
+    });
 
     // menu btn click
     menuBtn.addEventListener('click', () => {
-        menuPopup.classList.toggle('active');
-        menuBtn.classList.toggle('rotate');
+        menuToggle();
     });
 
-    // menu specific click
+    // menu links click
     menuUl.addEventListener('click', (e) => {
         setCategories('.menu_ul li', e);
-        menuPopup.classList.toggle('active');
-        menuBtn.classList.toggle('rotate');
+        menuToggle();
     });
 
-    // game mode switch
-    let gameModeBtn = document.querySelector('#switch');
-    gameModeBtn.addEventListener('click', () => {
+    function checkMode() {
         let gameModeText = document.querySelector('.game_mode');
         let cardDescr = document.querySelectorAll('.card_description');
         let cardImg = document.querySelectorAll('.card_img');
-
         // play mode
         if (gameModeBtn.checked && !English.isStartPage) {
-            English.isTrainMode = !English.isTrainMode;
+            English.isTrainMode = false;
             gameModeText = document.querySelector('.game_mode');
             gameModeText.innerHTML = 'Play';
             for (let i = 0; i < cardDescr.length; i++) {
@@ -138,10 +165,9 @@ window.addEventListener('DOMContentLoaded', () => {
             }
             startGameBtn.style.display = 'block';
             // train mode
-        } else {
-            English.isTrainMode = !English.isTrainMode;
+        } else if (!gameModeBtn.checked && !English.isStartPage) {
+            English.isTrainMode = true;
             gameModeText.innerHTML = 'Train';
-
             for (let i = 0; i < cardDescr.length; i++) {
                 cardDescr[i].style.display = 'flex';
                 cardImg[i].style.height = '187px';
@@ -149,6 +175,11 @@ window.addEventListener('DOMContentLoaded', () => {
             }
             startGameBtn.style.display = 'none';
         }
+    }
+
+    // game mode switch
+    gameModeBtn.addEventListener('click', () => {
+        checkMode();
     });
 
     function shuffle(array) {
@@ -165,7 +196,9 @@ window.addEventListener('DOMContentLoaded', () => {
             // first word sound
             msg.text = `${English.wordsArr[English.currNumberWord]}`;
             synth.speak(msg);
-            startGameBtn.innerHTML = 'Repeat';
+            startGameBtn.innerHTML = '<img src="/assets/img/flip_btn.svg" alt="Repeat">Repeat';
+            startGameBtn.style.background = '#115599';
+            startGameBtn.style.border = '2px solid #115599';
             English.isGameStart = true;
         } else {
             // repeat word sound
@@ -176,7 +209,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function setCategories(trg, e) {
         let clickedCard = e.target.closest(trg);
-        let catName = clickedCard.querySelector('.card_name');
+        let catName;
+        if (clickedCard != null) {
+            catName = clickedCard.querySelector('.card_name');
+        }
         let catHeading = document.querySelector('.categories_name');
         let menuLi = document.querySelectorAll('.menu_ul li a');
 
@@ -197,8 +233,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             }
             English.setCards(categoriesPos);
-            English.isStartPage = !English.isStartPage;
-
+            English.isStartPage = false;
+            checkMode();
             // flip btn click
         } else if (e.target.closest('.flip_btn')) {
             const cardFlip = e.target.closest('.card_flip');
@@ -217,7 +253,6 @@ window.addEventListener('DOMContentLoaded', () => {
             // play mode card click
         } else if (clickedCard && !English.isTrainMode && English.isGameStart) {
             let catSound = catName.innerHTML;
-            let scoreDiv = document.querySelector('.score');
 
             // correct card click
             if (catSound == English.wordsArr[English.currNumberWord]) {
@@ -249,14 +284,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     sound.play();
                     setTimeout(() => {
                         smiley.remove();
-                        startGameBtn.style.display = 'none';
-                        startGameBtn.innerHTML = 'Start game';
-                        gameModeBtn.checked = false;
-                        English.isStartPage = true;
-                        English.isTrainMode = true;
-                        English.isGameStart = false;
-                        English.currNumberWord = 0;
-                        English.wrongWordsCount = 0;
+                        English.clearCards();
                         English.init();
                     }, 2000);
                 }
