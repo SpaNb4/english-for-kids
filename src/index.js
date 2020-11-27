@@ -18,6 +18,8 @@ let scoreDiv = document.querySelector('.score');
 let startGameBtn = document.querySelector('.categories_start_game');
 let gameModeBtn = document.querySelector('#switch');
 let categoriesDiv = document.querySelector('.categories');
+let categoriesName = document.querySelector('.categories_name');
+let statsBtn = document.querySelector('.categories_stats');
 
 const English = {
     isStartPage: true,
@@ -40,7 +42,6 @@ const English = {
         // set categories
         this.setCards(0);
 
-        let categoriesName = document.querySelector('.categories_name');
         categoriesName.innerHTML = 'Main Page';
 
         // set menu
@@ -116,6 +117,7 @@ const English = {
                 cardImgBack.style.backgroundSize = `contain`;
             }
             this.wordsArr[i] = cardsArr[n][i].word;
+            statsBtn.style.display = 'block';
             cardsDiv.append(card);
         }
     },
@@ -167,26 +169,30 @@ window.addEventListener('DOMContentLoaded', () => {
         let cardDescr = document.querySelectorAll('.card_description');
         let cardImg = document.querySelectorAll('.card_img');
         // play mode
-        if (gameModeBtn.checked && !English.isStartPage && !English.isStatsPage) {
-            English.isTrainMode = false;
-            gameModeText = document.querySelector('.game_mode');
+        if (gameModeBtn.checked) {
             gameModeText.innerHTML = 'Play';
-            for (let i = 0; i < cardDescr.length; i++) {
-                cardDescr[i].style.display = 'none';
-                cardImg[i].style.height = '240px';
-                cardImg[i].style.borderRadius = '20px 20px 20px 20px';
+            if (!English.isStartPage && !English.isStatsPage) {
+                English.isTrainMode = false;
+                gameModeText = document.querySelector('.game_mode');
+                for (let i = 0; i < cardDescr.length; i++) {
+                    cardDescr[i].style.display = 'none';
+                    cardImg[i].style.height = '240px';
+                    cardImg[i].style.borderRadius = '20px 20px 20px 20px';
+                }
+                startGameBtn.style.display = 'block';
             }
-            startGameBtn.style.display = 'block';
             // train mode
-        } else if (!gameModeBtn.checked && !English.isStartPage && !English.isStatsPage) {
-            English.isTrainMode = true;
+        } else if (!gameModeBtn.checked) {
             gameModeText.innerHTML = 'Train';
-            for (let i = 0; i < cardDescr.length; i++) {
-                cardDescr[i].style.display = 'flex';
-                cardImg[i].style.height = '187px';
-                cardImg[i].style.borderRadius = '20px 20px 0px 0px';
+            if (!English.isStartPage && !English.isStatsPage) {
+                English.isTrainMode = true;
+                for (let i = 0; i < cardDescr.length; i++) {
+                    cardDescr[i].style.display = 'flex';
+                    cardImg[i].style.height = '187px';
+                    cardImg[i].style.borderRadius = '20px 20px 0px 0px';
+                }
+                startGameBtn.style.display = 'none';
             }
-            startGameBtn.style.display = 'none';
         }
     }
 
@@ -228,7 +234,6 @@ window.addEventListener('DOMContentLoaded', () => {
         if (clickedCard != null) {
             catName = clickedCard.querySelector('.card_name');
         }
-        let catHeading = document.querySelector('.categories_name');
         let menuLi = document.querySelectorAll('.menu_ul li a');
 
         function createStatsObj(key, field) {
@@ -255,7 +260,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             }
             English.clearCards();
-            catHeading.innerHTML = catName.innerHTML;
+            categoriesName.innerHTML = catName.innerHTML;
             for (let i = 0; i < menuLi.length; i++) {
                 menuLi[i].classList.remove('active');
                 if (menuLi[i].innerHTML == catName.innerHTML) {
@@ -263,7 +268,13 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             }
             English.setCards(categoriesPos);
-            English.isStartPage = false;
+
+            if (catName.innerHTML == 'Main Page') {
+                English.isStatsPage = true;
+            } else {
+                English.isStartPage = false;
+            }
+
             checkMode();
             // flip btn click
         } else if (e.target.closest('.flip_btn')) {
@@ -343,16 +354,18 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    let statsBtn = document.querySelector('.categories_stats');
     statsBtn.addEventListener('click', () => {
         English.clearCards();
+        categoriesName.innerHTML = 'Statistics';
+        statsBtn.style.display = 'none';
         English.isStatsPage = true;
-        categoriesDiv.innerHTML = '';
-        let statsDiv = document.createElement('div');
-        statsDiv.classList.add('stats');
-        statsDiv.innerHTML = `<div class="stats_buttons">
-                                <a href="#">Repeat difficult words</a>
-                                <a href="#">Reset</a>
+        function setTable() {
+            cardsDiv.innerHTML = '';
+            let statsDiv = document.createElement('div');
+            statsDiv.classList.add('stats');
+            statsDiv.innerHTML = `<div class="stats_buttons">
+                                <a href="#" class="repeat_btn">Repeat difficult words</a>
+                                <a href="#" class="reset_btn">Reset</a>
                               </div>
                               <div class="stats_table">
                                 <table>
@@ -372,17 +385,16 @@ window.addEventListener('DOMContentLoaded', () => {
                                     </tbody>
                                 </table>
                               </div>`;
-        categoriesDiv.append(statsDiv);
+            cardsDiv.append(statsDiv);
 
-        let n = 0;
-        console.log(English.statsArr);
-        for (let i = 1; i < cardsArr.length; i++) {
-            for (let j = 0; j < cardsArr[i].length; j++) {
-                let lastTr = document.querySelector('.stats_table tbody');
-                let tr = document.createElement('tr');
-                if (cardsArr[i][j].word in English.statsArr) {
-                    if (English.statsArr[cardsArr[i][j].word].playCorrCount != 0) {
-                        tr.innerHTML = `
+            let n = 0;
+            for (let i = 1; i < cardsArr.length; i++) {
+                for (let j = 0; j < cardsArr[i].length; j++) {
+                    let lastTr = document.querySelector('.stats_table tbody');
+                    let tr = document.createElement('tr');
+                    if (cardsArr[i][j].word in English.statsArr) {
+                        if (English.statsArr[cardsArr[i][j].word].playCorrCount != 0) {
+                            tr.innerHTML = `
                             <td>${cardsArr[i][j].word}</td>
                             <td>${cardsArr[i][j].translation}</td>
                             <td>${cardsArr[0][n].word}</td>
@@ -391,8 +403,8 @@ window.addEventListener('DOMContentLoaded', () => {
                             <td>${English.statsArr[cardsArr[i][j].word].playWrongCount}</td>
                             <td>${(100 / (English.statsArr[cardsArr[i][j].word].playWrongCount + English.statsArr[cardsArr[i][j].word].playCorrCount)).toFixed(2)}</td>
                         `;
-                    } else {
-                        tr.innerHTML = `
+                        } else {
+                            tr.innerHTML = `
                         <td>${cardsArr[i][j].word}</td>
                         <td>${cardsArr[i][j].translation}</td>
                         <td>${cardsArr[0][n].word}</td>
@@ -401,9 +413,9 @@ window.addEventListener('DOMContentLoaded', () => {
                         <td>${English.statsArr[cardsArr[i][j].word].playWrongCount}</td>
                         <td>0</td>
                     `;
-                    }
-                } else {
-                    tr.innerHTML = `
+                        }
+                    } else {
+                        tr.innerHTML = `
                                     <td>${cardsArr[i][j].word}</td>
                                     <td>${cardsArr[i][j].translation}</td>
                                     <td>${cardsArr[0][n].word}</td>
@@ -412,11 +424,26 @@ window.addEventListener('DOMContentLoaded', () => {
                                     <td>0</td>
                                     <td>0</td>
                                 `;
+                    }
+                    lastTr.append(tr);
                 }
-                lastTr.append(tr);
+                n++;
             }
-            n++;
+            new Tablesort(document.querySelector('.stats_table table'));
         }
-        new Tablesort(document.querySelector('.stats_table table'));
+        
+        setTable();
+
+        let repeatBtn = document.querySelector('.repeat_btn');
+        repeatBtn.addEventListener('click', () => {
+            
+        });
+
+        let resetBtn = document.querySelector('.reset_btn');
+        resetBtn.addEventListener('click', () => {
+            English.statsArr = [];
+            localStorage.removeItem('stats');
+            setTable();
+        });
     });
 });

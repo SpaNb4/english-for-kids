@@ -244,6 +244,7 @@ body {
             text-align: center;
         }
         .stats {
+            width: 100%;
             .stats_buttons {
                 text-align: right;
                 margin-bottom: 20px;
@@ -263,7 +264,7 @@ body {
                         padding: 10px;
                     }
                     tr:nth-child(even) {
-                        background: lighten($gray_color,15%);
+                        background: lighten($gray_color, 15%);
                     }
                     tr:nth-child(odd) {
                         background: $white_color;
