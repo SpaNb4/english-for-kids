@@ -1,5 +1,10 @@
 import './assets/scss/main.scss';
 import cardsArr from './cards';
+// tablesort lib
+// https://github.com/tristen/tablesort
+import './assets/tablesort/tablesort.min';
+import './assets/tablesort/tablesort.number.min';
+import './assets/tablesort/tablesort.css';
 
 function importAll(r) {
     r.keys().forEach(r);
@@ -12,16 +17,24 @@ let menuUl = document.querySelector('.menu_ul');
 let scoreDiv = document.querySelector('.score');
 let startGameBtn = document.querySelector('.categories_start_game');
 let gameModeBtn = document.querySelector('#switch');
+let categoriesDiv = document.querySelector('.categories');
 
 const English = {
     isStartPage: true,
+    isStatsPage: false,
     isTrainMode: true,
     isGameStart: false,
     wordsArr: [],
+    statsArr: {},
     currNumberWord: 0,
     wrongWordsCount: 0,
 
     init() {
+        // check stats save
+        if (localStorage.getItem('stats')) {
+            English.statsArr = JSON.parse(localStorage.getItem('stats'));
+        }
+
         English.isStartPage = true;
 
         // set categories
@@ -44,21 +57,21 @@ const English = {
         }
     },
 
-    // remove all cards
+    // remove all cards, reset state
     clearCards() {
         cardsDiv.innerHTML = '';
         scoreDiv.innerHTML = '';
 
         startGameBtn.style.display = 'none';
         startGameBtn.innerHTML = 'Start game';
-        // gameModeBtn.checked = false;
         English.isStartPage = false;
-        // English.isTrainMode = true;
+        English.isStatsPage = false;
         English.isGameStart = false;
         English.currNumberWord = 0;
         English.wrongWordsCount = 0;
     },
 
+    // generate cards
     setCards(n) {
         for (let i = 0; i < cardsArr[n].length; i++) {
             let card = document.createElement('div');
@@ -109,6 +122,9 @@ const English = {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
+    let menuBtn = document.querySelector('.menu_btn');
+    let menuPopup = document.querySelector('.menu_popup');
+
     English.init();
 
     let msg = new SpeechSynthesisUtterance();
@@ -119,9 +135,6 @@ window.addEventListener('DOMContentLoaded', () => {
     cardsDiv.addEventListener('click', (e) => {
         setCategories('.card', e);
     });
-
-    let menuBtn = document.querySelector('.menu_btn');
-    let menuPopup = document.querySelector('.menu_popup');
 
     function menuToggle() {
         menuPopup.classList.toggle('active');
@@ -154,7 +167,7 @@ window.addEventListener('DOMContentLoaded', () => {
         let cardDescr = document.querySelectorAll('.card_description');
         let cardImg = document.querySelectorAll('.card_img');
         // play mode
-        if (gameModeBtn.checked && !English.isStartPage) {
+        if (gameModeBtn.checked && !English.isStartPage && !English.isStatsPage) {
             English.isTrainMode = false;
             gameModeText = document.querySelector('.game_mode');
             gameModeText.innerHTML = 'Play';
@@ -165,7 +178,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
             startGameBtn.style.display = 'block';
             // train mode
-        } else if (!gameModeBtn.checked && !English.isStartPage) {
+        } else if (!gameModeBtn.checked && !English.isStartPage && !English.isStatsPage) {
             English.isTrainMode = true;
             gameModeText.innerHTML = 'Train';
             for (let i = 0; i < cardDescr.length; i++) {
@@ -191,7 +204,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     startGameBtn.addEventListener('click', () => {
-        if (English.currNumberWord == 0) {
+        // game not start
+        if (!English.isGameStart) {
             shuffle(English.wordsArr);
             // first word sound
             msg.text = `${English.wordsArr[English.currNumberWord]}`;
@@ -200,6 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
             startGameBtn.style.background = '#115599';
             startGameBtn.style.border = '2px solid #115599';
             English.isGameStart = true;
+            // game start
         } else {
             // repeat word sound
             msg.text = `${English.wordsArr[English.currNumberWord]}`;
@@ -215,6 +230,21 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         let catHeading = document.querySelector('.categories_name');
         let menuLi = document.querySelectorAll('.menu_ul li a');
+
+        function createStatsObj(key, field) {
+            if (key in English.statsArr) {
+                English.statsArr[key][field] = English.statsArr[key][field] + 1;
+            } else {
+                if (field == 'trainCount') {
+                    English.statsArr[key] = { trainCount: 1, playCorrCount: 0, playWrongCount: 0 };
+                } else if (field == 'playCorrCount') {
+                    English.statsArr[key] = { trainCount: 0, playCorrCount: 1, playWrongCount: 0 };
+                } else if (field == 'playWrongCount') {
+                    English.statsArr[key] = { trainCount: 0, playCorrCount: 0, playWrongCount: 1 };
+                }
+            }
+            localStorage.setItem('stats', JSON.stringify(English.statsArr));
+        }
 
         // categories click
         if (clickedCard && !clickedCard.classList.contains('card_flip')) {
@@ -249,6 +279,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (!clickedCard.classList.contains('fliped')) {
                 msg.text = `${catName.innerHTML}`;
                 synth.speak(msg);
+                createStatsObj(catName.innerHTML, 'trainCount');
             }
             // play mode card click
         } else if (clickedCard && !English.isTrainMode && English.isGameStart) {
@@ -258,6 +289,9 @@ window.addEventListener('DOMContentLoaded', () => {
             if (catSound == English.wordsArr[English.currNumberWord]) {
                 const corrSound = new Audio('correct.mp3');
                 corrSound.play();
+
+                createStatsObj(catName.innerHTML, 'playCorrCount');
+
                 English.currNumberWord++;
                 if (English.currNumberWord != English.wordsArr.length) {
                     setTimeout(() => {
@@ -273,7 +307,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
                 function resMessage(spec_sound, msg) {
                     let scoreDiv = document.querySelector('.score');
-                    let categoriesDiv = document.querySelector('.categories');
                     English.clearCards();
                     scoreDiv.innerHTML = '';
                     let smiley = document.createElement('div');
@@ -297,6 +330,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
                 // wrong card click
             } else {
+                createStatsObj(English.wordsArr[English.currNumberWord], 'playWrongCount');
+
                 let scoreStar = document.createElement('div');
                 scoreStar.classList.add('score_star');
                 scoreStar.innerHTML = '<img src="./assets/img/error_start.svg" alt="">';
@@ -307,4 +342,81 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
+    let statsBtn = document.querySelector('.categories_stats');
+    statsBtn.addEventListener('click', () => {
+        English.clearCards();
+        English.isStatsPage = true;
+        categoriesDiv.innerHTML = '';
+        let statsDiv = document.createElement('div');
+        statsDiv.classList.add('stats');
+        statsDiv.innerHTML = `<div class="stats_buttons">
+                                <a href="#">Repeat difficult words</a>
+                                <a href="#">Reset</a>
+                              </div>
+                              <div class="stats_table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Word</th>
+                                            <th>Translation</th>
+                                            <th>Category</th>
+                                            <th>Trained</th>
+                                            <th>Correct</th>
+                                            <th>Wrong</th>
+                                            <th>Correct, %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                              </div>`;
+        categoriesDiv.append(statsDiv);
+
+        let n = 0;
+        console.log(English.statsArr);
+        for (let i = 1; i < cardsArr.length; i++) {
+            for (let j = 0; j < cardsArr[i].length; j++) {
+                let lastTr = document.querySelector('.stats_table tbody');
+                let tr = document.createElement('tr');
+                if (cardsArr[i][j].word in English.statsArr) {
+                    if (English.statsArr[cardsArr[i][j].word].playCorrCount != 0) {
+                        tr.innerHTML = `
+                            <td>${cardsArr[i][j].word}</td>
+                            <td>${cardsArr[i][j].translation}</td>
+                            <td>${cardsArr[0][n].word}</td>
+                            <td>${English.statsArr[cardsArr[i][j].word].trainCount}</td>
+                            <td>${English.statsArr[cardsArr[i][j].word].playCorrCount}</td>
+                            <td>${English.statsArr[cardsArr[i][j].word].playWrongCount}</td>
+                            <td>${(100 / (English.statsArr[cardsArr[i][j].word].playWrongCount + English.statsArr[cardsArr[i][j].word].playCorrCount)).toFixed(2)}</td>
+                        `;
+                    } else {
+                        tr.innerHTML = `
+                        <td>${cardsArr[i][j].word}</td>
+                        <td>${cardsArr[i][j].translation}</td>
+                        <td>${cardsArr[0][n].word}</td>
+                        <td>${English.statsArr[cardsArr[i][j].word].trainCount}</td>
+                        <td>${English.statsArr[cardsArr[i][j].word].playCorrCount}</td>
+                        <td>${English.statsArr[cardsArr[i][j].word].playWrongCount}</td>
+                        <td>0</td>
+                    `;
+                    }
+                } else {
+                    tr.innerHTML = `
+                                    <td>${cardsArr[i][j].word}</td>
+                                    <td>${cardsArr[i][j].translation}</td>
+                                    <td>${cardsArr[0][n].word}</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                `;
+                }
+                lastTr.append(tr);
+            }
+            n++;
+        }
+        new Tablesort(document.querySelector('.stats_table table'));
+    });
 });

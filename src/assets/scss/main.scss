@@ -243,6 +243,38 @@ body {
         .smiley {
             text-align: center;
         }
+        .stats {
+            .stats_buttons {
+                text-align: right;
+                margin-bottom: 20px;
+                a {
+                    color: $black_color;
+                    text-decoration: none;
+                }
+                a:first-child {
+                    margin-right: 30px;
+                }
+            }
+            .stats_table {
+                overflow-x: auto;
+                table {
+                    width: 100%;
+                    th {
+                        padding: 10px;
+                    }
+                    tr:nth-child(even) {
+                        background: lighten($gray_color,15%);
+                    }
+                    tr:nth-child(odd) {
+                        background: $white_color;
+                    }
+                    td {
+                        text-align: center;
+                        padding: 8px;
+                    }
+                }
+            }
+        }
     }
     .score {
         display: flex;

@@ -268,9 +268,9 @@ const cards = [
             image: 'img/toys/train.png',
         },
         {
-            word: 'constructor',
+            word: 'model kits',
             translation: 'конструктор',
-            image: 'img/toys/constructor.png',
+            image: 'img/toys/model_kits.png',
         },
         {
             word: 'dinosaur',
