@@ -6,22 +6,20 @@ import './assets/tablesort/tablesort.min';
 import './assets/tablesort/tablesort.number.min';
 import './assets/tablesort/tablesort.css';
 
+import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup } from './const';
+import * as handlers from './handlers';
+
 function importAll(r) {
     r.keys().forEach(r);
 }
 
 importAll(require.context('./assets/sounds/', true, /\.mp3$/));
 
-let cardsDiv = document.querySelector('.cards');
-let menuUl = document.querySelector('.menu_ul');
-let scoreDiv = document.querySelector('.score');
-let startGameBtn = document.querySelector('.categories_start_game');
-let gameModeBtn = document.querySelector('#switch');
-let categoriesDiv = document.querySelector('.categories');
-let categoriesName = document.querySelector('.categories_name');
-let statsBtn = document.querySelector('.categories_stats');
+export let msg = new SpeechSynthesisUtterance();
+export let synth = window.speechSynthesis;
+msg.lang = 'en-US';
 
-const English = {
+export const English = {
     isStartPage: true,
     isStatsPage: false,
     isTrainMode: true,
@@ -73,162 +71,75 @@ const English = {
     },
 
     // generate cards
-    setCards(n) {
-        for (let i = 0; i < cardsArr[n].length; i++) {
+    setCards(n, arr) {
+        function generateCard(i, j) {
             let card = document.createElement('div');
             card.classList.add('card');
-            // categories card
-            if (cardsArr[n][i].category) {
-                card.innerHTML = `<div class="card_img">
+            card.classList.add('card_flip');
+            card.innerHTML = `<div class="card_front">
+                            <div class="card_img">
+                            </div>
+                            <div class="card_description">
+                                <div class="card_name">${cardsArr[i][j].word}</div>
+                                    <div class='flip_btn'> </div>
+                            </div>
+                          </div>
+                          <div class="card_back">
+                            <div class="card_img">
+                            </div>
+                             <div class="card_description">
+                                <div class="card_name">${cardsArr[i][j].translation}</div>
+                             </div>
+                          </div>`;
+            let cardImgFront = card.querySelector('.card_front .card_img');
+            cardImgFront.style.background = `no-repeat center url('./assets/${cardsArr[i][j].image}')`;
+            cardImgFront.style.backgroundSize = `contain`;
+            let cardImgBack = card.querySelector('.card_back .card_img');
+            cardImgBack.style.background = `no-repeat center url('./assets/${cardsArr[i][j].image}')`;
+            cardImgBack.style.backgroundSize = `contain`;
+            statsBtn.style.display = 'block';
+            cardsDiv.append(card);
+        }
+        // genetate from json
+        if (!arr) {
+            for (let i = 0; i < cardsArr[n].length; i++) {
+                // categories card
+                if (cardsArr[n][i].category) {
+                    let card = document.createElement('div');
+                    card.classList.add('card');
+                    card.innerHTML = `<div class="card_img">
                                   </div>
                                   <div class="card_description">
                                     <div class="card_name">${cardsArr[n][i].word}</div>
                                   </div>`;
-                let cardImg = card.querySelector('.card_img');
-                cardImg.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
-                cardImg.style.backgroundSize = `contain`;
-                // not categories card
-            } else {
-                card.classList.add('card_flip');
-                card.innerHTML = `<div class="card_front">
-                                    <div class="card_img">
-
-                                    </div>
-                                    <div class="card_description">
-                                        <div class="card_name">${cardsArr[n][i].word}</div>
-                                            <div class='flip_btn'> </div>
-                                    </div>
-                                  </div>
-
-                                  <div class="card_back">
-                                    <div class="card_img">
-
-                                    </div>
-                                     <div class="card_description">
-                                        <div class="card_name">${cardsArr[n][i].translation}</div>
-                                     </div>
-                                  </div>`;
-
-                let cardImgFront = card.querySelector('.card_front .card_img');
-                cardImgFront.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
-                cardImgFront.style.backgroundSize = `contain`;
-                let cardImgBack = card.querySelector('.card_back .card_img');
-                cardImgBack.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
-                cardImgBack.style.backgroundSize = `contain`;
+                    let cardImg = card.querySelector('.card_img');
+                    cardImg.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
+                    cardImg.style.backgroundSize = `contain`;
+                    cardsDiv.append(card);
+                    // not categories card
+                } else {
+                    generateCard(n, i);
+                }
+                this.wordsArr[i] = cardsArr[n][i].word;
             }
-            this.wordsArr[i] = cardsArr[n][i].word;
-            statsBtn.style.display = 'block';
-            cardsDiv.append(card);
+            // generate from array
+        } else {
+            let n = 0;
+            for (let k = 0; k < arr.length; k++) {
+                for (let i = 0; i < cardsArr[i].length; i++) {
+                    for (let j = 0; j < arr.length; j++) {
+                        if (arr[n] == cardsArr[i][j].word) {
+                            generateCard(i, j);
+                            this.wordsArr[j] = cardsArr[i][j].word;
+                            n++;
+                        }
+                    }
+                }
+            }
         }
     },
-};
 
-window.addEventListener('DOMContentLoaded', () => {
-    let menuBtn = document.querySelector('.menu_btn');
-    let menuPopup = document.querySelector('.menu_popup');
-
-    English.init();
-
-    let msg = new SpeechSynthesisUtterance();
-    let synth = window.speechSynthesis;
-    msg.lang = 'en-US';
-
-    // cards click
-    cardsDiv.addEventListener('click', (e) => {
-        setCategories('.card', e);
-    });
-
-    function menuToggle() {
-        menuPopup.classList.toggle('active');
-        menuBtn.classList.toggle('rotate');
-    }
-    // not menu click
-    document.body.addEventListener('click', (e) => {
-        if (e.target != menuUl && e.target != menuBtn) {
-            if (menuPopup.classList.contains('active')) {
-                menuToggle();
-            }
-        } else if (e.target == menuUl) {
-            menuToggle();
-        }
-    });
-
-    // menu btn click
-    menuBtn.addEventListener('click', () => {
-        menuToggle();
-    });
-
-    // menu links click
-    menuUl.addEventListener('click', (e) => {
-        setCategories('.menu_ul li', e);
-        menuToggle();
-    });
-
-    function checkMode() {
-        let gameModeText = document.querySelector('.game_mode');
-        let cardDescr = document.querySelectorAll('.card_description');
-        let cardImg = document.querySelectorAll('.card_img');
-        // play mode
-        if (gameModeBtn.checked) {
-            gameModeText.innerHTML = 'Play';
-            if (!English.isStartPage && !English.isStatsPage) {
-                English.isTrainMode = false;
-                gameModeText = document.querySelector('.game_mode');
-                for (let i = 0; i < cardDescr.length; i++) {
-                    cardDescr[i].style.display = 'none';
-                    cardImg[i].style.height = '240px';
-                    cardImg[i].style.borderRadius = '20px 20px 20px 20px';
-                }
-                startGameBtn.style.display = 'block';
-            }
-            // train mode
-        } else if (!gameModeBtn.checked) {
-            gameModeText.innerHTML = 'Train';
-            if (!English.isStartPage && !English.isStatsPage) {
-                English.isTrainMode = true;
-                for (let i = 0; i < cardDescr.length; i++) {
-                    cardDescr[i].style.display = 'flex';
-                    cardImg[i].style.height = '187px';
-                    cardImg[i].style.borderRadius = '20px 20px 0px 0px';
-                }
-                startGameBtn.style.display = 'none';
-            }
-        }
-    }
-
-    // game mode switch
-    gameModeBtn.addEventListener('click', () => {
-        checkMode();
-    });
-
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    startGameBtn.addEventListener('click', () => {
-        // game not start
-        if (!English.isGameStart) {
-            shuffle(English.wordsArr);
-            // first word sound
-            msg.text = `${English.wordsArr[English.currNumberWord]}`;
-            synth.speak(msg);
-            startGameBtn.innerHTML = '<img src="/assets/img/flip_btn.svg" alt="Repeat">Repeat';
-            startGameBtn.style.background = '#115599';
-            startGameBtn.style.border = '2px solid #115599';
-            English.isGameStart = true;
-            // game start
-        } else {
-            // repeat word sound
-            msg.text = `${English.wordsArr[English.currNumberWord]}`;
-            synth.speak(msg);
-        }
-    });
-
-    function setCategories(trg, e) {
+    setCategories(trg, e) {
         let clickedCard = e.target.closest(trg);
         let catName;
         if (clickedCard != null) {
@@ -239,13 +150,14 @@ window.addEventListener('DOMContentLoaded', () => {
         function createStatsObj(key, field) {
             if (key in English.statsArr) {
                 English.statsArr[key][field] = English.statsArr[key][field] + 1;
+                English.statsArr[key]['corrPerc'] = (100 / (English.statsArr[key].playWrongCount + English.statsArr[key].playCorrCount)).toFixed(2);
             } else {
                 if (field == 'trainCount') {
-                    English.statsArr[key] = { trainCount: 1, playCorrCount: 0, playWrongCount: 0 };
+                    English.statsArr[key] = { trainCount: 1, playCorrCount: 0, playWrongCount: 0, corrPerc: 0 };
                 } else if (field == 'playCorrCount') {
-                    English.statsArr[key] = { trainCount: 0, playCorrCount: 1, playWrongCount: 0 };
+                    English.statsArr[key] = { trainCount: 0, playCorrCount: 1, playWrongCount: 0, corrPerc: 0 };
                 } else if (field == 'playWrongCount') {
-                    English.statsArr[key] = { trainCount: 0, playCorrCount: 0, playWrongCount: 1 };
+                    English.statsArr[key] = { trainCount: 0, playCorrCount: 0, playWrongCount: 1, corrPerc: 0 };
                 }
             }
             localStorage.setItem('stats', JSON.stringify(English.statsArr));
@@ -275,7 +187,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 English.isStartPage = false;
             }
 
-            checkMode();
+            English.checkMode();
             // flip btn click
         } else if (e.target.closest('.flip_btn')) {
             const cardFlip = e.target.closest('.card_flip');
@@ -352,98 +264,42 @@ window.addEventListener('DOMContentLoaded', () => {
                 English.wrongWordsCount++;
             }
         }
-    }
+    },
 
-    statsBtn.addEventListener('click', () => {
-        English.clearCards();
-        categoriesName.innerHTML = 'Statistics';
-        statsBtn.style.display = 'none';
-        English.isStatsPage = true;
-        function setTable() {
-            cardsDiv.innerHTML = '';
-            let statsDiv = document.createElement('div');
-            statsDiv.classList.add('stats');
-            statsDiv.innerHTML = `<div class="stats_buttons">
-                                <a href="#" class="repeat_btn">Repeat difficult words</a>
-                                <a href="#" class="reset_btn">Reset</a>
-                              </div>
-                              <div class="stats_table">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Word</th>
-                                            <th>Translation</th>
-                                            <th>Category</th>
-                                            <th>Trained</th>
-                                            <th>Correct</th>
-                                            <th>Wrong</th>
-                                            <th>Correct, %</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+    checkMode() {
+        let gameModeText = document.querySelector('.game_mode');
+        let cardDescr = document.querySelectorAll('.card_description');
+        let cardImg = document.querySelectorAll('.card_img');
 
-                                    </tbody>
-                                </table>
-                              </div>`;
-            cardsDiv.append(statsDiv);
-
-            let n = 0;
-            for (let i = 1; i < cardsArr.length; i++) {
-                for (let j = 0; j < cardsArr[i].length; j++) {
-                    let lastTr = document.querySelector('.stats_table tbody');
-                    let tr = document.createElement('tr');
-                    if (cardsArr[i][j].word in English.statsArr) {
-                        if (English.statsArr[cardsArr[i][j].word].playCorrCount != 0) {
-                            tr.innerHTML = `
-                            <td>${cardsArr[i][j].word}</td>
-                            <td>${cardsArr[i][j].translation}</td>
-                            <td>${cardsArr[0][n].word}</td>
-                            <td>${English.statsArr[cardsArr[i][j].word].trainCount}</td>
-                            <td>${English.statsArr[cardsArr[i][j].word].playCorrCount}</td>
-                            <td>${English.statsArr[cardsArr[i][j].word].playWrongCount}</td>
-                            <td>${(100 / (English.statsArr[cardsArr[i][j].word].playWrongCount + English.statsArr[cardsArr[i][j].word].playCorrCount)).toFixed(2)}</td>
-                        `;
-                        } else {
-                            tr.innerHTML = `
-                        <td>${cardsArr[i][j].word}</td>
-                        <td>${cardsArr[i][j].translation}</td>
-                        <td>${cardsArr[0][n].word}</td>
-                        <td>${English.statsArr[cardsArr[i][j].word].trainCount}</td>
-                        <td>${English.statsArr[cardsArr[i][j].word].playCorrCount}</td>
-                        <td>${English.statsArr[cardsArr[i][j].word].playWrongCount}</td>
-                        <td>0</td>
-                    `;
-                        }
-                    } else {
-                        tr.innerHTML = `
-                                    <td>${cardsArr[i][j].word}</td>
-                                    <td>${cardsArr[i][j].translation}</td>
-                                    <td>${cardsArr[0][n].word}</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                `;
-                    }
-                    lastTr.append(tr);
-                }
-                n++;
+        function switchMode(descrVisible, height, border, startBtnVisible, isTrain) {
+            English.isTrainMode = isTrain;
+            for (let i = 0; i < cardDescr.length; i++) {
+                cardDescr[i].style.display = descrVisible;
+                cardImg[i].style.height = height;
+                cardImg[i].style.borderRadius = border;
             }
-            new Tablesort(document.querySelector('.stats_table table'));
+            startGameBtn.style.display = startBtnVisible;
         }
-        
-        setTable();
 
-        let repeatBtn = document.querySelector('.repeat_btn');
-        repeatBtn.addEventListener('click', () => {
-            
-        });
+        // play mode
+        if (gameModeBtn.checked) {
+            gameModeText.innerHTML = 'Play';
+            if (!English.isStartPage && !English.isStatsPage) {
+                switchMode('none', '240px', '20px 20px 20px 20px', 'block', false);
+            }
+            // train mode
+        } else if (!gameModeBtn.checked) {
+            gameModeText.innerHTML = 'Train';
+            if (!English.isStartPage && !English.isStatsPage) {
+                switchMode('flex', '187px', '20px 20px 0px 0px', 'none', true);
+            }
+        }
+    },
 
-        let resetBtn = document.querySelector('.reset_btn');
-        resetBtn.addEventListener('click', () => {
-            English.statsArr = [];
-            localStorage.removeItem('stats');
-            setTable();
-        });
-    });
-});
+    menuToggle() {
+        menuPopup.classList.toggle('active');
+        menuBtn.classList.toggle('rotate');
+    },
+};
+
+English.init();
