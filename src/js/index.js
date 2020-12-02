@@ -1,10 +1,10 @@
-import './assets/scss/main.scss';
+import '../assets/scss/main.scss';
 import cardsArr from './cards';
 // tablesort lib
 // https://github.com/tristen/tablesort
-import './assets/tablesort/tablesort.min';
-import './assets/tablesort/tablesort.number.min';
-import './assets/tablesort/tablesort.css';
+import './tablesort/tablesort.min';
+import './tablesort/tablesort.number.min';
+import './tablesort/tablesort.css';
 
 import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup } from './const';
 import * as handlers from './handlers';
@@ -13,7 +13,7 @@ function importAll(r) {
     r.keys().forEach(r);
 }
 
-importAll(require.context('./assets/sounds/', true, /\.mp3$/));
+importAll(require.context('../assets/sounds/', true, /\.mp3$/));
 
 export let msg = new SpeechSynthesisUtterance();
 export let synth = window.speechSynthesis;

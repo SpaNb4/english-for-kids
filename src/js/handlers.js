@@ -48,7 +48,7 @@ startGameBtn.addEventListener('click', () => {
         // first word sound
         msg.text = `${English.wordsArr[English.currNumberWord]}`;
         synth.speak(msg);
-        startGameBtn.innerHTML = '<img src="/assets/img/flip_btn.svg" alt="Repeat">Repeat';
+        startGameBtn.innerHTML = '<img src="./assets/img/flip_btn.svg" alt="Repeat">Repeat';
         startGameBtn.style.background = '#115599';
         startGameBtn.style.border = '2px solid #115599';
         English.isGameStart = true;

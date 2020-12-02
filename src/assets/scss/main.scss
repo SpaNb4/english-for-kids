@@ -6,7 +6,7 @@ $black_color: #000000;
 
 body {
     font-family: Montserrat;
-    background: url(/assets/img/bg.jpg);
+    background: url(../img/bg.jpg);
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
@@ -32,7 +32,7 @@ body {
             z-index: 2;
             width: 40px;
             height: 40px;
-            background: url(/assets/img/menu-open.svg) 0 0 repeat;
+            background: url(../img/menu-open.svg) 0 0 repeat;
             background-size: 40px 40px;
             transition: 1s;
             &.rotate {
@@ -217,7 +217,7 @@ body {
                         position: absolute;
                         width: 18px;
                         height: 19px;
-                        background: url(/assets/img/flip_btn.svg);
+                        background: url(../img/flip_btn.svg);
                         right: 25px;
                         bottom: 17px;
                         cursor: pointer;
