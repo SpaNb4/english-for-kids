@@ -40,7 +40,7 @@ export const English = {
         // set categories
         this.setCards(0);
 
-        categoriesName.innerHTML = 'Main Page';
+        categoriesName.innerHTML = '<img src="./assets/img/menu/main_page.svg" alt=""> Main Page';
 
         // set menu
         let menuLi = document.querySelector('.menu_ul li');
@@ -62,7 +62,7 @@ export const English = {
         scoreDiv.innerHTML = '';
 
         startGameBtn.style.display = 'none';
-        startGameBtn.innerHTML = 'Start game';
+        startGameBtn.innerHTML = `<img src="./assets/img/start.svg" alt=""> Start game`;
         English.isStartPage = false;
         English.isStatsPage = false;
         English.isGameStart = false;
@@ -172,7 +172,11 @@ export const English = {
                 }
             }
             English.clearCards();
-            categoriesName.innerHTML = catName.innerHTML;
+            if (catName.innerHTML == 'Main Page') {
+                categoriesName.innerHTML = '<img src="./assets/img/menu/main_page.svg" alt=""> Main Page';
+            } else {
+                categoriesName.innerHTML = `<img src="./assets/img/menu/${catName.innerHTML}.svg" alt=""> ${catName.innerHTML}`;
+            }
             for (let i = 0; i < menuLi.length; i++) {
                 menuLi[i].classList.remove('active');
                 if (menuLi[i].innerHTML == catName.innerHTML) {
@@ -285,7 +289,7 @@ export const English = {
         if (gameModeBtn.checked) {
             gameModeText.innerHTML = 'Play';
             if (!English.isStartPage && !English.isStatsPage) {
-                switchMode('none', '240px', '20px 20px 20px 20px', 'block', false);
+                switchMode('none', '240px', '20px 20px 20px 20px', 'flex', false);
             }
             // train mode
         } else if (!gameModeBtn.checked) {
@@ -299,6 +303,7 @@ export const English = {
     menuToggle() {
         menuPopup.classList.toggle('active');
         menuBtn.classList.toggle('rotate');
+        document.body.classList.toggle('overflow_hidden');
     },
 };
 

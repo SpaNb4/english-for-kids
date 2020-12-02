@@ -1,4 +1,5 @@
 import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup } from './const';
+import cardsArr from './cards';
 import { English, msg, synth } from './index';
 
 // cards click
@@ -147,7 +148,9 @@ statsBtn.addEventListener('click', () => {
         // sort object by corrPerc
         let sortByPercArr = Object.entries(English.statsArr).slice(0);
         sortByPercArr.sort(function (a, b) {
-            return a[1].corrPerc - b[1].corrPerc;
+            if (a[1].corrPerc != 0 && b[1].corrPerc != 0) {
+                return a[1].corrPerc - b[1].corrPerc;
+            }
         });
         // sorted words to repeat
         let sortWordsArr = [];

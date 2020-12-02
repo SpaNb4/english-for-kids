@@ -11,6 +11,9 @@ body {
     background-position: center center;
     background-attachment: fixed;
     background-size: cover;
+    &.overflow_hidden {
+        overflow: hidden;
+    }
 }
 
 .wrapper {
@@ -147,11 +150,19 @@ body {
         font-weight: bold;
         font-size: 48px;
         color: $orange_color;
+        .categories_name img {
+            width: 40px;
+        }
         .categories_stats {
             font-size: 36px;
+            cursor: pointer;
+            img {
+                width: 40px;
+            }
         }
         .categories_start_game {
             display: none;
+            align-items: center;
             color: $white_color;
             font-size: 30px;
             padding: 10px;
@@ -159,11 +170,16 @@ body {
             border-radius: 20px;
             background: $orange_color;
             cursor: pointer;
+            &:hover {
+                border-radius: 20px;
+                box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            }
             img {
                 margin-right: 10px;
                 transition: all 0.2s;
-                &:active {
-                    transform: rotate(360deg);
+                width: 30px;
+                &:hover {
+                    filter: brightness(86%);
                 }
             }
         }
@@ -185,6 +201,10 @@ body {
                 &.inactive {
                     filter: brightness(0.5);
                     pointer-events: none;
+                }
+                &:hover {
+                    border-radius: 20px;
+                    box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.15);
                 }
                 &.card_flip {
                     position: relative;
@@ -213,10 +233,6 @@ body {
                     .card_back {
                         position: absolute;
                         backface-visibility: hidden;
-                    }
-                    .card_front:hover {
-                        border-radius: 20px;
-                        box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.15);
                     }
                     .card_back {
                         cursor: default;
@@ -317,10 +333,50 @@ body {
 
 /* Small Devices, Tablets */
 @media only screen and (max-width: 768px) {
+    .main {
+        .wrapper {
+            .categories_heading {
+                flex-direction: column;
+                .categories_name {
+                    font-size: 36px;
+                    margin-bottom: 20px;
+                }
+                .categories_start_game {
+                    margin-bottom: 20px;
+                }
+                .categories_stats {
+                    font-size: 32px;
+                }
+            }
+        }
+    }
 }
 
 /* Extra Small Devices, Phones */
 @media only screen and (max-width: 480px) {
+    .header {
+        .header_logo {
+            display: none;
+        }
+    }
+    .main .wrapper {
+        padding: 30px 5px 15px;
+    }
+    .main {
+        .wrapper {
+            .categories_heading {
+                .categories_name {
+                    font-size: 24px;
+                }
+                .categories_start_game {
+                    font-size: 20px;
+                }
+                .categories_stats {
+                    font-size: 20px;
+                }
+            }
+        }
+    }
 }
 
 /* Custom, iPhone Retina */
