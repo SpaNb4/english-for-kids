@@ -63,8 +63,8 @@ body {
 
                     list-style-type: none;
                     font-weight: bold;
-                    font-size: 34px;
-                    padding: 20px 0;
+                    font-size: 30px;
+                    padding: 14px 0;
                     img {
                         width: 30px;
                         margin-right: 15px;
@@ -150,8 +150,15 @@ body {
         font-weight: bold;
         font-size: 48px;
         color: $orange_color;
-        .categories_name img {
-            width: 40px;
+        .categories_name {
+            .back_btn {
+                font-size: 16px;
+                text-decoration: none;
+                color: $black_color;
+            }
+            img {
+                width: 40px;
+            }
         }
         .categories_stats {
             font-size: 36px;
@@ -325,6 +332,14 @@ body {
 
 /* Large Devices, Wide Screens */
 @media only screen and (max-width: 1200px) {
+    .main {
+        .wrapper {
+            .categories_heading {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    }
 }
 
 /* Medium Devices, Desktops */
@@ -333,19 +348,21 @@ body {
 
 /* Small Devices, Tablets */
 @media only screen and (max-width: 768px) {
+    .header .wrapper .menu_popup ul li {
+        font-size: 20px;
+        padding: 5px 0;
+    }
     .main {
         .wrapper {
             .categories_heading {
-                flex-direction: column;
                 .categories_name {
-                    font-size: 36px;
-                    margin-bottom: 20px;
+                    font-size: 30px;
                 }
                 .categories_start_game {
-                    margin-bottom: 20px;
+                    font-size: 18px;
                 }
                 .categories_stats {
-                    font-size: 32px;
+                    font-size: 22px;
                 }
             }
         }
@@ -367,12 +384,18 @@ body {
             .categories_heading {
                 .categories_name {
                     font-size: 24px;
+                    img {
+                        width: 30px;
+                    }
                 }
                 .categories_start_game {
-                    font-size: 20px;
+                    font-size: 16px;
                 }
                 .categories_stats {
-                    font-size: 20px;
+                    font-size: 18px;
+                    img {
+                        width: 30px;
+                    }
                 }
             }
         }

@@ -39,12 +39,24 @@ module.exports = {
                 use: ['babel-loader'],
             },
             {
-                test: /\.(png|gif|jpe?g|svg|mp3)$/i,
+                test: /\.(png|gif|jpe?g|svg)$/i,
                 use: [
                     {
                         loader: 'file-loader',
                         options: {
-                            name: 'assets/img/[name].[hash:6].[ext]',
+                            name: 'assets/img/[name].[ext]',
+                            publicPath: '../',
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.(mp3)$/i,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'assets/sounds/[name].[ext]',
                             publicPath: '../',
                         },
                     },
@@ -98,6 +110,14 @@ module.exports = {
                 {
                     from: path.resolve(environment.paths.source, 'assets/img', ''),
                     to: path.resolve(environment.paths.output, 'assets/img', ''),
+                    toType: 'dir',
+                    globOptions: {
+                        ignore: ['*.DS_Store', 'Thumbs.db'],
+                    },
+                },
+                {
+                    from: path.resolve(environment.paths.source, 'assets/sounds', ''),
+                    to: path.resolve(environment.paths.output, 'assets/sounds', ''),
                     toType: 'dir',
                     globOptions: {
                         ignore: ['*.DS_Store', 'Thumbs.db'],

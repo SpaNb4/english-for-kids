@@ -62,19 +62,24 @@ startGameBtn.addEventListener('click', () => {
 
 statsBtn.addEventListener('click', () => {
     English.clearCards();
+    English.clearActiveMenu();
     categoriesName.innerHTML = 'Statistics';
     statsBtn.style.display = 'none';
     English.isStatsPage = true;
+    English.isStartPage = false;
+    let statsDiv = document.createElement('div');
+    statsDiv.classList.add('stats');
+    statsDiv.innerHTML = `<div class="stats_buttons">
+                            <a href="#" class="repeat_btn">Repeat difficult words</a>
+                            <a href="#" class="reset_btn">Reset</a>
+                          </div>`;
+    cardsDiv.append(statsDiv);
+
+    let statsTable = document.createElement('div');
+    statsTable.classList.add('stats_table');
+
     function setTable() {
-        cardsDiv.innerHTML = '';
-        let statsDiv = document.createElement('div');
-        statsDiv.classList.add('stats');
-        statsDiv.innerHTML = `<div class="stats_buttons">
-                                <a href="#" class="repeat_btn">Repeat difficult words</a>
-                                <a href="#" class="reset_btn">Reset</a>
-                              </div>
-                              <div class="stats_table">
-                                <table>
+        statsTable.innerHTML = `<table>
                                     <thead>
                                         <tr>
                                             <th>Word</th>
@@ -89,9 +94,9 @@ statsBtn.addEventListener('click', () => {
                                     <tbody>
 
                                     </tbody>
-                                </table>
-                              </div>`;
-        cardsDiv.append(statsDiv);
+                              </table>`;
+
+        statsDiv.append(statsTable);
 
         let n = 0;
         for (let i = 1; i < cardsArr.length; i++) {
@@ -145,16 +150,27 @@ statsBtn.addEventListener('click', () => {
 
     let repeatBtn = document.querySelector('.repeat_btn');
     repeatBtn.addEventListener('click', () => {
+        English.isStatsPage = false;
+        English.isStartPage = false;
+        English.checkMode();
         // sort object by corrPerc
         let sortByPercArr = Object.entries(English.statsArr).slice(0);
-        sortByPercArr.sort(function (a, b) {
-            if (a[1].corrPerc != 0 && b[1].corrPerc != 0) {
-                return a[1].corrPerc - b[1].corrPerc;
-            }
+        sortByPercArr = sortByPercArr.filter(function (el) {
+            return el[1].corrPerc != 0;
         });
+
+        sortByPercArr.sort(function (a, b) {
+            return a[1].corrPerc - b[1].corrPerc;
+        });
+        let n = 0;
+        if (sortByPercArr.length <= 8) {
+            n = sortByPercArr.length;
+        } else {
+            n = 8;
+        }
         // sorted words to repeat
         let sortWordsArr = [];
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < n; i++) {
             sortWordsArr[i] = sortByPercArr[i][0];
         }
         English.clearCards();
@@ -163,7 +179,7 @@ statsBtn.addEventListener('click', () => {
 
     let resetBtn = document.querySelector('.reset_btn');
     resetBtn.addEventListener('click', () => {
-        English.statsArr = [];
+        English.statsArr = {};
         localStorage.removeItem('stats');
         setTable();
     });

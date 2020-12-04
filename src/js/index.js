@@ -1,19 +1,14 @@
 import '../assets/scss/main.scss';
 import cardsArr from './cards';
+
 // tablesort lib
 // https://github.com/tristen/tablesort
 import './tablesort/tablesort.min';
 import './tablesort/tablesort.number.min';
 import './tablesort/tablesort.css';
 
-import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup } from './const';
+import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup, orange_color } from './const';
 import * as handlers from './handlers';
-
-function importAll(r) {
-    r.keys().forEach(r);
-}
-
-importAll(require.context('../assets/sounds/', true, /\.mp3$/));
 
 export let msg = new SpeechSynthesisUtterance();
 export let synth = window.speechSynthesis;
@@ -24,6 +19,7 @@ export const English = {
     isStatsPage: false,
     isTrainMode: true,
     isGameStart: false,
+    menuLink: null,
     wordsArr: [],
     statsArr: {},
     currNumberWord: 0,
@@ -32,10 +28,10 @@ export const English = {
     init() {
         // check stats save
         if (localStorage.getItem('stats')) {
-            English.statsArr = JSON.parse(localStorage.getItem('stats'));
+            this.statsArr = JSON.parse(localStorage.getItem('stats'));
         }
 
-        English.isStartPage = true;
+        this.isStartPage = true;
 
         // set categories
         this.setCards(0);
@@ -53,6 +49,17 @@ export const English = {
                 menuLi.innerHTML = `<img src="./assets/img/menu/${cardsArr[0][i].word}.svg" alt=""><a class="card_name" href="#">${cardsArr[0][i].word}</a>`;
                 menuUl.append(menuLi);
             }
+            this.menuLink = document.querySelectorAll('.menu_ul li a');
+            // add active class for main_page_li_a when going to main page
+        } else {
+            this.clearActiveMenu();
+            this.menuLink[0].classList.add('active');
+        }
+    },
+
+    clearActiveMenu() {
+        for (let i = 0; i < this.menuLink.length; i++) {
+            this.menuLink[i].classList.remove('active');
         }
     },
 
@@ -60,14 +67,17 @@ export const English = {
     clearCards() {
         cardsDiv.innerHTML = '';
         scoreDiv.innerHTML = '';
-
-        startGameBtn.style.display = 'none';
+        if (this.isStartPage) {
+            startGameBtn.style.display = 'none';
+        }
         startGameBtn.innerHTML = `<img src="./assets/img/start.svg" alt=""> Start game`;
-        English.isStartPage = false;
-        English.isStatsPage = false;
-        English.isGameStart = false;
-        English.currNumberWord = 0;
-        English.wrongWordsCount = 0;
+        startGameBtn.style.border = `2px solid ${orange_color}`;
+        startGameBtn.style.background = `${orange_color}`;
+        this.isStartPage = false;
+        this.isStatsPage = false;
+        this.isGameStart = false;
+        this.currNumberWord = 0;
+        this.wrongWordsCount = 0;
     },
 
     // generate cards
@@ -125,12 +135,13 @@ export const English = {
             // generate from array
         } else {
             let n = 0;
+            this.wordsArr = [];
             for (let k = 0; k < arr.length; k++) {
                 for (let i = 0; i < cardsArr[i].length; i++) {
-                    for (let j = 0; j < arr.length; j++) {
+                    for (let j = 0; j < cardsArr[j].length; j++) {
                         if (arr[n] == cardsArr[i][j].word) {
                             generateCard(i, j);
-                            this.wordsArr[j] = cardsArr[i][j].word;
+                            this.wordsArr[n] = cardsArr[i][j].word;
                             n++;
                         }
                     }
@@ -145,8 +156,6 @@ export const English = {
         if (clickedCard != null) {
             catName = clickedCard.querySelector('.card_name');
         }
-        let menuLi = document.querySelectorAll('.menu_ul li a');
-
         function createStatsObj(key, field) {
             if (key in English.statsArr) {
                 English.statsArr[key][field] = English.statsArr[key][field] + 1;
@@ -172,23 +181,24 @@ export const English = {
                 }
             }
             English.clearCards();
+            // main page link click
             if (catName.innerHTML == 'Main Page') {
-                categoriesName.innerHTML = '<img src="./assets/img/menu/main_page.svg" alt=""> Main Page';
+                English.init();
+                // click on others links
             } else {
-                categoriesName.innerHTML = `<img src="./assets/img/menu/${catName.innerHTML}.svg" alt=""> ${catName.innerHTML}`;
+                categoriesName.innerHTML = `<img src="./assets/img/menu/${catName.innerHTML}.svg" alt=""> ${catName.innerHTML} <a href="#" class="back_btn">Main page</a>`;
+                let mainPageLink = document.querySelector('.back_btn');
+                mainPageLink.addEventListener('click', () => {
+                    English.clearCards();
+                    English.init();
+                });
+                English.setCards(categoriesPos);
             }
-            for (let i = 0; i < menuLi.length; i++) {
-                menuLi[i].classList.remove('active');
-                if (menuLi[i].innerHTML == catName.innerHTML) {
-                    menuLi[i].classList.toggle('active');
+            for (let i = 0; i < English.menuLink.length; i++) {
+                English.menuLink[i].classList.remove('active');
+                if (English.menuLink[i].innerHTML == catName.innerHTML) {
+                    English.menuLink[i].classList.toggle('active');
                 }
-            }
-            English.setCards(categoriesPos);
-
-            if (catName.innerHTML == 'Main Page') {
-                English.isStatsPage = true;
-            } else {
-                English.isStartPage = false;
             }
 
             English.checkMode();
@@ -206,6 +216,7 @@ export const English = {
             if (!clickedCard.classList.contains('fliped')) {
                 msg.text = `${catName.innerHTML}`;
                 synth.speak(msg);
+
                 createStatsObj(catName.innerHTML, 'trainCount');
             }
             // play mode card click
@@ -214,7 +225,7 @@ export const English = {
 
             // correct card click
             if (catSound == English.wordsArr[English.currNumberWord]) {
-                const corrSound = new Audio('correct.mp3');
+                const corrSound = new Audio('./assets/sounds/correct.mp3');
                 corrSound.play();
 
                 createStatsObj(catName.innerHTML, 'playCorrCount');
@@ -234,6 +245,7 @@ export const English = {
 
                 function resMessage(spec_sound, msg) {
                     let scoreDiv = document.querySelector('.score');
+                    English.isStartPage = true;
                     English.clearCards();
                     scoreDiv.innerHTML = '';
                     let smiley = document.createElement('div');
@@ -250,10 +262,10 @@ export const English = {
                 }
                 // win message
                 if (English.currNumberWord == English.wordsArr.length && English.wrongWordsCount == 0) {
-                    resMessage('win.mp3', '<h2>You Win</h2><img src="./assets/img/win_smiley.png" alt="" >');
+                    resMessage('./assets/sounds/win.mp3', '<h2>You Win</h2><img src="./assets/img/win_smiley.png" alt="" >');
                     // lose message
                 } else if (English.currNumberWord == English.wordsArr.length && English.wrongWordsCount != 0) {
-                    resMessage('lose.mp3', `<h2>You Lose: ${English.wrongWordsCount} errors</h2><img src="./assets/img/lose_smiley.png" alt="" >`);
+                    resMessage('./assets/sounds/lose.mp3', `<h2>You Lose: ${English.wrongWordsCount} errors</h2><img src="./assets/img/lose_smiley.png" alt="" >`);
                 }
                 // wrong card click
             } else {
@@ -263,7 +275,7 @@ export const English = {
                 scoreStar.classList.add('score_star');
                 scoreStar.innerHTML = '<img src="./assets/img/error_start.svg" alt="">';
                 scoreDiv.append(scoreStar);
-                const errSound = new Audio('error.mp3');
+                const errSound = new Audio('./assets/sounds/error.mp3');
                 errSound.play();
                 English.wrongWordsCount++;
             }
@@ -290,6 +302,8 @@ export const English = {
             gameModeText.innerHTML = 'Play';
             if (!English.isStartPage && !English.isStatsPage) {
                 switchMode('none', '240px', '20px 20px 20px 20px', 'flex', false);
+            } else {
+                switchMode('flex', '187px', '20px 20px 0px 0px', 'none', true);
             }
             // train mode
         } else if (!gameModeBtn.checked) {

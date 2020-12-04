@@ -352,9 +352,9 @@ const cards = [
             image: 'img/space/Sun.png',
         },
         {
-            word: 'cosmonaut',
+            word: 'astronaut',
             translation: 'космонавт',
-            image: 'img/space/cosmonaut.png',
+            image: 'img/space/astronaut.png',
         },
         {
             word: 'spaceship',
