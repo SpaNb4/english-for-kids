@@ -1,5 +1,7 @@
-import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup } from './const';
+/* eslint-disable object-curly-newline */
+import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, categoriesName, menuPopup } from './const';
 import cardsArr from './cards';
+// eslint-disable-next-line import/no-cycle
 import { English, msg, synth } from './index';
 
 // cards click
@@ -9,11 +11,11 @@ cardsDiv.addEventListener('click', (e) => {
 
 // not menu click
 document.body.addEventListener('click', (e) => {
-    if (e.target != menuUl && e.target != menuBtn) {
+    if (e.target !== menuUl && e.target !== menuBtn) {
         if (menuPopup.classList.contains('active')) {
             English.menuToggle();
         }
-    } else if (e.target == menuUl) {
+    } else if (e.target === menuUl) {
         English.menuToggle();
     }
 });
@@ -36,9 +38,10 @@ gameModeBtn.addEventListener('click', () => {
 
 startGameBtn.addEventListener('click', () => {
     function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
+        for (let i = array.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
 
+            // eslint-disable-next-line no-param-reassign
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
@@ -67,7 +70,7 @@ statsBtn.addEventListener('click', () => {
     statsBtn.style.display = 'none';
     English.isStatsPage = true;
     English.isStartPage = false;
-    let statsDiv = document.createElement('div');
+    const statsDiv = document.createElement('div');
     statsDiv.classList.add('stats');
     statsDiv.innerHTML = `<div class="stats_buttons">
                             <a href="#" class="repeat_btn">Repeat difficult words</a>
@@ -75,7 +78,7 @@ statsBtn.addEventListener('click', () => {
                           </div>`;
     cardsDiv.append(statsDiv);
 
-    let statsTable = document.createElement('div');
+    const statsTable = document.createElement('div');
     statsTable.classList.add('stats_table');
 
     function setTable() {
@@ -99,13 +102,13 @@ statsBtn.addEventListener('click', () => {
         statsDiv.append(statsTable);
 
         let n = 0;
-        for (let i = 1; i < cardsArr.length; i++) {
-            for (let j = 0; j < cardsArr[i].length; j++) {
-                let lastTr = document.querySelector('.stats_table tbody');
-                let tr = document.createElement('tr');
+        for (let i = 1; i < cardsArr.length; i += 1) {
+            for (let j = 0; j < cardsArr[i].length; j += 1) {
+                const lastTr = document.querySelector('.stats_table tbody');
+                const tr = document.createElement('tr');
                 if (cardsArr[i][j].word in English.statsArr) {
                     // can calculate percent
-                    if (English.statsArr[cardsArr[i][j].word].playCorrCount != 0) {
+                    if (English.statsArr[cardsArr[i][j].word].playCorrCount !== 0) {
                         tr.innerHTML = `
                             <td>${cardsArr[i][j].word}</td>
                             <td>${cardsArr[i][j].translation}</td>
@@ -141,27 +144,24 @@ statsBtn.addEventListener('click', () => {
                 }
                 lastTr.append(tr);
             }
-            n++;
+            n += 1;
         }
+        // eslint-disable-next-line no-new, no-undef
         new Tablesort(document.querySelector('.stats_table table'));
     }
 
     setTable();
 
-    let repeatBtn = document.querySelector('.repeat_btn');
+    const repeatBtn = document.querySelector('.repeat_btn');
     repeatBtn.addEventListener('click', () => {
         English.isStatsPage = false;
         English.isStartPage = false;
         English.checkMode();
         // sort object by corrPerc
         let sortByPercArr = Object.entries(English.statsArr).slice(0);
-        sortByPercArr = sortByPercArr.filter(function (el) {
-            return el[1].corrPerc != 0;
-        });
+        sortByPercArr = sortByPercArr.filter((el) => el[1].corrPerc !== 0);
 
-        sortByPercArr.sort(function (a, b) {
-            return a[1].corrPerc - b[1].corrPerc;
-        });
+        sortByPercArr.sort((a, b) => a[1].corrPerc - b[1].corrPerc);
         let n = 0;
         if (sortByPercArr.length <= 8) {
             n = sortByPercArr.length;
@@ -169,15 +169,16 @@ statsBtn.addEventListener('click', () => {
             n = 8;
         }
         // sorted words to repeat
-        let sortWordsArr = [];
-        for (let i = 0; i < n; i++) {
+        const sortWordsArr = [];
+        for (let i = 0; i < n; i += 1) {
+            // eslint-disable-next-line prefer-destructuring
             sortWordsArr[i] = sortByPercArr[i][0];
         }
         English.clearCards();
         English.setCards(null, sortWordsArr);
     });
 
-    let resetBtn = document.querySelector('.reset_btn');
+    const resetBtn = document.querySelector('.reset_btn');
     resetBtn.addEventListener('click', () => {
         English.statsArr = {};
         localStorage.removeItem('stats');

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import '../assets/scss/main.scss';
 import cardsArr from './cards';
 
@@ -7,11 +8,13 @@ import './tablesort/tablesort.min';
 import './tablesort/tablesort.number.min';
 import './tablesort/tablesort.css';
 
-import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup, orange_color } from './const';
+// eslint-disable-next-line object-curly-newline
+import { cardsDiv, menuBtn, menuUl, gameModeBtn, startGameBtn, statsBtn, scoreDiv, categoriesDiv, categoriesName, menuPopup, orangeColor } from './const';
+// eslint-disable-next-line
 import * as handlers from './handlers';
 
-export let msg = new SpeechSynthesisUtterance();
-export let synth = window.speechSynthesis;
+export const msg = new SpeechSynthesisUtterance();
+export const synth = window.speechSynthesis;
 msg.lang = 'en-US';
 
 export const English = {
@@ -39,13 +42,12 @@ export const English = {
         categoriesName.innerHTML = '<img src="./assets/img/menu/main_page.svg" alt=""> Main Page';
 
         // set menu
-        let menuLi = document.querySelector('.menu_ul li');
-        if (!menuLi) {
-            let menuLi = document.createElement('li');
-            menuLi.innerHTML = `<img src="./assets/img/menu/main_page.svg" alt=""><a class="card_name active" href="#">Main Page</a>`;
-            menuUl.append(menuLi);
-            for (let i = 0; i < cardsArr[0].length; i++) {
-                let menuLi = document.createElement('li');
+        if (!menuUl.firstChild) {
+            const mainPageLi = document.createElement('li');
+            mainPageLi.innerHTML = '<img src="./assets/img/menu/main_page.svg" alt=""><a class="card_name active" href="#">Main Page</a>';
+            menuUl.append(mainPageLi);
+            for (let i = 0; i < cardsArr[0].length; i += 1) {
+                const menuLi = document.createElement('li');
                 menuLi.innerHTML = `<img src="./assets/img/menu/${cardsArr[0][i].word}.svg" alt=""><a class="card_name" href="#">${cardsArr[0][i].word}</a>`;
                 menuUl.append(menuLi);
             }
@@ -58,7 +60,7 @@ export const English = {
     },
 
     clearActiveMenu() {
-        for (let i = 0; i < this.menuLink.length; i++) {
+        for (let i = 0; i < this.menuLink.length; i += 1) {
             this.menuLink[i].classList.remove('active');
         }
     },
@@ -70,9 +72,9 @@ export const English = {
         if (this.isStartPage) {
             startGameBtn.style.display = 'none';
         }
-        startGameBtn.innerHTML = `<img src="./assets/img/start.svg" alt=""> Start game`;
-        startGameBtn.style.border = `2px solid ${orange_color}`;
-        startGameBtn.style.background = `${orange_color}`;
+        startGameBtn.innerHTML = '<img src="./assets/img/start.svg" alt=""> Start game';
+        startGameBtn.style.border = `2px solid ${orangeColor}`;
+        startGameBtn.style.background = `${orangeColor}`;
         this.isStartPage = false;
         this.isStatsPage = false;
         this.isGameStart = false;
@@ -83,7 +85,7 @@ export const English = {
     // generate cards
     setCards(n, arr) {
         function generateCard(i, j) {
-            let card = document.createElement('div');
+            const card = document.createElement('div');
             card.classList.add('card');
             card.classList.add('card_flip');
             card.innerHTML = `<div class="card_front">
@@ -101,30 +103,30 @@ export const English = {
                                 <div class="card_name">${cardsArr[i][j].translation}</div>
                              </div>
                           </div>`;
-            let cardImgFront = card.querySelector('.card_front .card_img');
+            const cardImgFront = card.querySelector('.card_front .card_img');
             cardImgFront.style.background = `no-repeat center url('./assets/${cardsArr[i][j].image}')`;
-            cardImgFront.style.backgroundSize = `contain`;
-            let cardImgBack = card.querySelector('.card_back .card_img');
+            cardImgFront.style.backgroundSize = 'contain';
+            const cardImgBack = card.querySelector('.card_back .card_img');
             cardImgBack.style.background = `no-repeat center url('./assets/${cardsArr[i][j].image}')`;
-            cardImgBack.style.backgroundSize = `contain`;
+            cardImgBack.style.backgroundSize = 'contain';
             statsBtn.style.display = 'block';
             cardsDiv.append(card);
         }
         // genetate from json
         if (!arr) {
-            for (let i = 0; i < cardsArr[n].length; i++) {
+            for (let i = 0; i < cardsArr[n].length; i += 1) {
                 // categories card
                 if (cardsArr[n][i].category) {
-                    let card = document.createElement('div');
+                    const card = document.createElement('div');
                     card.classList.add('card');
                     card.innerHTML = `<div class="card_img">
                                   </div>
                                   <div class="card_description">
                                     <div class="card_name">${cardsArr[n][i].word}</div>
                                   </div>`;
-                    let cardImg = card.querySelector('.card_img');
+                    const cardImg = card.querySelector('.card_img');
                     cardImg.style.background = `no-repeat center url('./assets/${cardsArr[n][i].image}')`;
-                    cardImg.style.backgroundSize = `contain`;
+                    cardImg.style.backgroundSize = 'contain';
                     cardsDiv.append(card);
                     // not categories card
                 } else {
@@ -134,15 +136,15 @@ export const English = {
             }
             // generate from array
         } else {
-            let n = 0;
+            let q = 0;
             this.wordsArr = [];
-            for (let k = 0; k < arr.length; k++) {
-                for (let i = 0; i < cardsArr[i].length; i++) {
-                    for (let j = 0; j < cardsArr[j].length; j++) {
-                        if (arr[n] == cardsArr[i][j].word) {
+            for (let k = 0; k < arr.length; k += 1) {
+                for (let i = 0; i < cardsArr[i].length; i += 1) {
+                    for (let j = 0; j < cardsArr[j].length; j += 1) {
+                        if (arr[q] === cardsArr[i][j].word) {
                             generateCard(i, j);
-                            this.wordsArr[n] = cardsArr[i][j].word;
-                            n++;
+                            this.wordsArr[q] = cardsArr[i][j].word;
+                            q += 1;
                         }
                     }
                 }
@@ -151,52 +153,83 @@ export const English = {
     },
 
     setCategories(trg, e) {
-        let clickedCard = e.target.closest(trg);
+        const clickedCard = e.target.closest(trg);
         let catName;
         if (clickedCard != null) {
             catName = clickedCard.querySelector('.card_name');
         }
         function createStatsObj(key, field) {
             if (key in English.statsArr) {
-                English.statsArr[key][field] = English.statsArr[key][field] + 1;
-                English.statsArr[key]['corrPerc'] = (100 / (English.statsArr[key].playWrongCount + English.statsArr[key].playCorrCount)).toFixed(2);
-            } else {
-                if (field == 'trainCount') {
-                    English.statsArr[key] = { trainCount: 1, playCorrCount: 0, playWrongCount: 0, corrPerc: 0 };
-                } else if (field == 'playCorrCount') {
-                    English.statsArr[key] = { trainCount: 0, playCorrCount: 1, playWrongCount: 0, corrPerc: 0 };
-                } else if (field == 'playWrongCount') {
-                    English.statsArr[key] = { trainCount: 0, playCorrCount: 0, playWrongCount: 1, corrPerc: 0 };
-                }
+                English.statsArr[key][field] += 1;
+                English.statsArr[key].corrPerc = (100 / (English.statsArr[key].playWrongCount + English.statsArr[key].playCorrCount)).toFixed(2);
+            } else if (field === 'trainCount') {
+                English.statsArr[key] = {
+                    trainCount: 1,
+                    playCorrCount: 0,
+                    playWrongCount: 0,
+                    corrPerc: 0,
+                };
+            } else if (field === 'playCorrCount') {
+                English.statsArr[key] = {
+                    trainCount: 0,
+                    playCorrCount: 1,
+                    playWrongCount: 0,
+                    corrPerc: 0,
+                };
+            } else if (field === 'playWrongCount') {
+                English.statsArr[key] = {
+                    trainCount: 0,
+                    playCorrCount: 0,
+                    playWrongCount: 1,
+                    corrPerc: 0,
+                };
             }
             localStorage.setItem('stats', JSON.stringify(English.statsArr));
+        }
+
+        function resMessage(specSound, message) {
+            const score = document.querySelector('.score');
+            English.isStartPage = true;
+            English.clearCards();
+            score.innerHTML = '';
+            const smiley = document.createElement('div');
+            smiley.classList.add('smiley');
+            smiley.innerHTML = `${message}`;
+            categoriesDiv.append(smiley);
+            const sound = new Audio(specSound);
+            sound.play();
+            setTimeout(() => {
+                smiley.remove();
+                English.clearCards();
+                English.init();
+            }, 2000);
         }
 
         // categories click
         if (clickedCard && !clickedCard.classList.contains('card_flip')) {
             let categoriesPos = 0;
-            for (let i = 0; i < cardsArr[0].length; i++) {
-                if (cardsArr[0][i].word == catName.innerHTML) {
+            for (let i = 0; i < cardsArr[0].length; i += 1) {
+                if (cardsArr[0][i].word === catName.innerHTML) {
                     categoriesPos = i + 1;
                 }
             }
             English.clearCards();
             // main page link click
-            if (catName.innerHTML == 'Main Page') {
+            if (catName.innerHTML === 'Main Page') {
                 English.init();
                 // click on others links
             } else {
                 categoriesName.innerHTML = `<img src="./assets/img/menu/${catName.innerHTML}.svg" alt=""> ${catName.innerHTML} <a href="#" class="back_btn">Main page</a>`;
-                let mainPageLink = document.querySelector('.back_btn');
+                const mainPageLink = document.querySelector('.back_btn');
                 mainPageLink.addEventListener('click', () => {
                     English.clearCards();
                     English.init();
                 });
                 English.setCards(categoriesPos);
             }
-            for (let i = 0; i < English.menuLink.length; i++) {
+            for (let i = 0; i < English.menuLink.length; i += 1) {
                 English.menuLink[i].classList.remove('active');
-                if (English.menuLink[i].innerHTML == catName.innerHTML) {
+                if (English.menuLink[i].innerHTML === catName.innerHTML) {
                     English.menuLink[i].classList.toggle('active');
                 }
             }
@@ -221,75 +254,58 @@ export const English = {
             }
             // play mode card click
         } else if (clickedCard && !English.isTrainMode && English.isGameStart) {
-            let catSound = catName.innerHTML;
+            const catSound = catName.innerHTML;
 
             // correct card click
-            if (catSound == English.wordsArr[English.currNumberWord]) {
+            if (catSound === English.wordsArr[English.currNumberWord]) {
                 const corrSound = new Audio('./assets/sounds/correct.mp3');
                 corrSound.play();
 
                 createStatsObj(catName.innerHTML, 'playCorrCount');
 
-                English.currNumberWord++;
-                if (English.currNumberWord != English.wordsArr.length) {
+                English.currNumberWord += 1;
+                if (English.currNumberWord !== English.wordsArr.length) {
                     setTimeout(() => {
                         msg.text = `${English.wordsArr[English.currNumberWord]}`;
                         synth.speak(msg);
                     }, 1000);
                 }
                 clickedCard.classList.add('inactive');
-                let scoreStar = document.createElement('div');
+                const scoreStar = document.createElement('div');
                 scoreStar.classList.add('score_star');
                 scoreStar.innerHTML = '<img src="./assets/img/right_start.svg" alt="">';
                 scoreDiv.append(scoreStar);
 
-                function resMessage(spec_sound, msg) {
-                    let scoreDiv = document.querySelector('.score');
-                    English.isStartPage = true;
-                    English.clearCards();
-                    scoreDiv.innerHTML = '';
-                    let smiley = document.createElement('div');
-                    smiley.classList.add('smiley');
-                    smiley.innerHTML = `${msg}`;
-                    categoriesDiv.append(smiley);
-                    const sound = new Audio(spec_sound);
-                    sound.play();
-                    setTimeout(() => {
-                        smiley.remove();
-                        English.clearCards();
-                        English.init();
-                    }, 2000);
-                }
                 // win message
-                if (English.currNumberWord == English.wordsArr.length && English.wrongWordsCount == 0) {
+                if (English.currNumberWord === English.wordsArr.length && English.wrongWordsCount === 0) {
                     resMessage('./assets/sounds/win.mp3', '<h2>You Win</h2><img src="./assets/img/win_smiley.png" alt="" >');
                     // lose message
-                } else if (English.currNumberWord == English.wordsArr.length && English.wrongWordsCount != 0) {
+                } else if (English.currNumberWord === English.wordsArr.length && English.wrongWordsCount !== 0) {
                     resMessage('./assets/sounds/lose.mp3', `<h2>You Lose: ${English.wrongWordsCount} errors</h2><img src="./assets/img/lose_smiley.png" alt="" >`);
                 }
                 // wrong card click
             } else {
                 createStatsObj(English.wordsArr[English.currNumberWord], 'playWrongCount');
 
-                let scoreStar = document.createElement('div');
+                const scoreStar = document.createElement('div');
                 scoreStar.classList.add('score_star');
                 scoreStar.innerHTML = '<img src="./assets/img/error_start.svg" alt="">';
                 scoreDiv.append(scoreStar);
                 const errSound = new Audio('./assets/sounds/error.mp3');
                 errSound.play();
-                English.wrongWordsCount++;
+                English.wrongWordsCount += 1;
             }
         }
     },
 
     checkMode() {
-        let gameModeText = document.querySelector('.game_mode');
-        let cardDescr = document.querySelectorAll('.card_description');
-        let cardImg = document.querySelectorAll('.card_img');
+        const gameModeText = document.querySelector('.game_mode');
+        const cardDescr = document.querySelectorAll('.card_description');
+        const cardImg = document.querySelectorAll('.card_img');
 
         function switchMode(descrVisible, height, border, startBtnVisible, isTrain) {
             English.isTrainMode = isTrain;
-            for (let i = 0; i < cardDescr.length; i++) {
+            for (let i = 0; i < cardDescr.length; i += 1) {
                 cardDescr[i].style.display = descrVisible;
                 cardImg[i].style.height = height;
                 cardImg[i].style.borderRadius = border;

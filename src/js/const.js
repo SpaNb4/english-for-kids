@@ -8,4 +8,4 @@ export const scoreDiv = document.querySelector('.score');
 export const categoriesDiv = document.querySelector('.categories');
 export const categoriesName = document.querySelector('.categories_name');
 export const menuPopup = document.querySelector('.menu_popup');
-export const orange_color='#e68b45';
+export const orangeColor = '#e68b45';
